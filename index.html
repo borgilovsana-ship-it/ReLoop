@@ -185,8 +185,20 @@
     }
     let userListingIds = (() => { try { return JSON.parse(localStorage.getItem("reloop-my-listings") || "[]"); } catch (_) { return []; } })();
     let favoriteIds = (() => { try { return JSON.parse(localStorage.getItem("reloop-favorites") || "[]"); } catch (_) { return []; } })();
+    (() => {
+      try {
+        const saved = JSON.parse(localStorage.getItem("reloop-my-products") || "[]");
+        saved.forEach(product => { if (!products.some(existing => existing.id === product.id)) products.unshift(product); });
+        if (saved.length) nextId = Math.max(nextId, ...saved.map(product => Number(product.id) + 1));
+      } catch (_) {}
+    })();
     function saveFavorites() { try { localStorage.setItem("reloop-favorites", JSON.stringify(favoriteIds)); } catch (_) {} }
-    function saveUserListings() { try { localStorage.setItem("reloop-my-listings", JSON.stringify(userListingIds)); } catch (_) {} }
+    function saveUserListings() {
+      try {
+        localStorage.setItem("reloop-my-listings", JSON.stringify(userListingIds));
+        localStorage.setItem("reloop-my-products", JSON.stringify(products.filter(product => userListingIds.includes(product.id))));
+      } catch (_) {}
+    }
     function renderProducts(query = "") {
       const grid = getPage("productGrid"), normalizedQuery = query.trim().toLowerCase();
       const filtered = products.filter(product => (product.name + " " + product.description).toLowerCase().includes(normalizedQuery));
