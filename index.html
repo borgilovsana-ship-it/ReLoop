@@ -122,7 +122,7 @@
         <form id="listingForm" class="form-card">
           <label class="form-label" for="listingName">Название предмета *</label><input class="form-input" id="listingName" maxlength="80" placeholder="Например, iPhone 13" required>
           <label class="form-label" for="listingDescription">Описание *</label><textarea class="form-input" id="listingDescription" maxlength="1000" placeholder="Состояние, комплектация и другие детали..." required></textarea>
-          <label class="form-label" for="listingPrice">Цена в евро (€) *</label><input class="form-input" id="listingPrice" type="number" min="0.01" max="10000000" step="0.01" placeholder="250" required>
+          <label class="form-label" for="listingPrice">Цена в рублях (₽) *</label><input class="form-input" id="listingPrice" type="number" min="0.01" max="1000000000" step="1" placeholder="25000" required>
           <span class="form-label">Фотография предмета</span><label class="photo-picker" for="listingPhoto"><span id="photoLabel">＋ Выбрать фотографию</span><input id="listingPhoto" type="file" accept="image/*"></label><img id="photoPreview" class="photo-preview" alt="Предпросмотр товара">
           <p class="notice">Объявление появится в этом каталоге на текущем устройстве. Для публикации всем пользователям позже подключим сервер.</p><p class="error hidden" id="formError"></p>
           <button type="submit" class="primary-button">Опубликовать объявление</button><button type="button" class="secondary-button" id="cancelCreate">Отмена</button>
@@ -251,8 +251,10 @@
       getPage("marketHeader").classList.toggle("hidden", id !== "marketPage");
       window.scrollTo({ top: 0, behavior: "smooth" });
     }
+    // Цены в каталоге хранятся во внутренних условных единицах; отображаем их в рублях.
+    // Коэффициент 100 — демонстрационный пересчёт для перехода с прежних цен в евро.
     function formatPrice(price) {
-      return "€" + Number(price).toLocaleString("en-IE", { minimumFractionDigits: 0, maximumFractionDigits: 2 });
+      return "₽" + Math.round(Number(price) * 100).toLocaleString("ru-RU");
     }
     function makeProductImage(product) {
       if (product.photo) {
@@ -342,7 +344,7 @@
     });
     getPage("listingForm").addEventListener("submit", event => {
       event.preventDefault();
-      const name = getPage("listingName").value.trim(), description = getPage("listingDescription").value.trim(), price = Number(getPage("listingPrice").value), error = getPage("formError");
+      const name = getPage("listingName").value.trim(), description = getPage("listingDescription").value.trim(), enteredPriceRub = Number(getPage("listingPrice").value), price = enteredPriceRub / 100, error = getPage("formError");
       if (!name || !description || !Number.isFinite(price) || price <= 0) {
         error.textContent = "Заполни название, описание и корректную цену."; error.classList.remove("hidden"); return;
       }
