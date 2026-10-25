@@ -62,7 +62,25 @@
     .welcome-card .form-label { margin-top: 16px; }
     .welcome-card .primary-button { margin-top: 22px; min-height: 48px; font-size: 14px; }
     .welcome-error { color: #c52222; font-size: 13px; margin-top: 10px; }
-    .hidden { display: none !important; }
+    .profile-top { text-align:center; padding:18px 12px 22px; border:1px solid #eee; border-radius:18px; margin-bottom:18px; }
+    .avatar-wrap { position:relative; width:94px; height:94px; margin:0 auto 12px; }
+    .profile-avatar { width:94px; height:94px; border-radius:50%; object-fit:cover; background:#f0f0f0; display:flex; align-items:center; justify-content:center; font-size:38px; color:#555; overflow:hidden; }
+    .avatar-edit { position:absolute; right:0; bottom:0; width:32px; height:32px; border:2px solid white; border-radius:50%; background:#171717; color:white; display:flex; align-items:center; justify-content:center; }
+    .avatar-edit input { display:none; }
+    .profile-username { color:#777; font-size:13px; margin-top:5px; }
+    .profile-stats { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:8px; margin:18px 0; }
+    .profile-stat { padding:13px 5px; border-radius:12px; background:#f6f6f6; text-align:center; }
+    .profile-stat strong { display:block; font-size:20px; margin-bottom:4px; }
+    .profile-stat span { font-size:11px; color:#777; }
+    .profile-menu { border:1px solid #eee; border-radius:15px; overflow:hidden; }
+    .profile-menu button { width:100%; display:flex; align-items:center; gap:12px; text-align:left; padding:16px 14px; border:0; border-bottom:1px solid #eee; background:white; font-size:14px; }
+    .profile-menu button:last-child { border-bottom:0; }
+    .profile-menu .menu-icon { font-size:20px; width:26px; text-align:center; }
+    .profile-menu .menu-arrow { margin-left:auto; color:#888; }
+    .favorite-button { width:38px; height:38px; border:1px solid #ddd; border-radius:11px; background:white; font-size:19px; margin-bottom:7px; }
+    .product-actions { display:grid; grid-template-columns:38px minmax(0,1fr); gap:7px; align-items:start; }
+    .product-actions .primary-button { min-height:38px; }
+    .hidden { display:none !important; }
   </style>
 </head>
 <body>
@@ -110,7 +128,20 @@
           <button type="submit" class="primary-button">Опубликовать объявление</button><button type="button" class="secondary-button" id="cancelCreate">Отмена</button>
         </form>
       </section>
-      <section class="page hidden" id="otherPage"><h2 id="otherTitle">Профиль</h2><p class="details" id="otherDescription">Этот раздел добавим позже.</p></section>
+      <section class="page hidden" id="profilePage">
+        <h2>Мой профиль</h2><div class="profile-top"><div class="avatar-wrap"><div id="profileAvatar" class="profile-avatar">♙</div><label class="avatar-edit" for="profilePhotoInput" aria-label="Изменить фото профиля">✎<input id="profilePhotoInput" type="file" accept="image/*"></label></div>
+        <h2 id="profileDisplayName" style="margin:0;font-size:22px">Пользователь</h2><p class="profile-username" id="profileDisplayUsername">@username</p><button type="button" class="secondary-button" id="editProfileButton" style="max-width:220px;margin-top:16px">Редактировать профиль</button></div>
+        <div class="profile-stats"><div class="profile-stat"><strong id="myListingsCount">0</strong><span>Мои объявления</span></div><div class="profile-stat"><strong id="mySoldCount">0</strong><span>Продано</span></div><div class="profile-stat"><strong id="myFavoritesCount">0</strong><span>Избранное</span></div></div>
+        <div class="profile-menu"><button type="button" id="myListingsButton"><span class="menu-icon">▦</span><span>Мои объявления</span><span class="menu-arrow">›</span></button><button type="button" id="favoritesButton"><span class="menu-icon">♡</span><span>Избранное</span><span class="menu-arrow">›</span></button><button type="button" id="editProfileMenuButton"><span class="menu-icon">⚙</span><span>Настройки профиля</span><span class="menu-arrow">›</span></button></div>
+        <p class="notice">Профиль пока сохраняется на этом устройстве. Чтобы другие пользователи интернета видели его, позже подключим общую базу данных и сервер.</p></section>
+      <section class="page hidden" id="myListingsPage"><button class="back-button" data-back-profile>← В профиль</button><h2>Мои объявления</h2><div class="product-grid" id="myListingsGrid"></div><button class="primary-button" id="newListingFromProfile">＋ Создать объявление</button></section>
+      <section class="page hidden" id="favoritesPage"><button class="back-button" data-back-profile>← В профиль</button><h2>Избранное</h2><div class="product-grid" id="favoritesGrid"></div></section>
+      <section class="page hidden" id="editProfilePage"><button class="back-button" data-back-profile>← В профиль</button><h2>Редактировать профиль</h2><form id="editProfileForm" class="form-card">
+        <label class="form-label" for="editProfileName">Имя *</label><input class="form-input" id="editProfileName" maxlength="40" required>
+        <label class="form-label" for="editProfileUsername">Юзернейм *</label><input class="form-input" id="editProfileUsername" maxlength="25" placeholder="@king" required>
+        <p class="notice">Юзернейм: 3–24 символа, латинские буквы, цифры или _. Фото можно изменить нажатием на аватар.</p><p class="error hidden" id="editProfileError"></p>
+        <button type="submit" class="primary-button">Сохранить изменения</button><button type="button" class="secondary-button" id="cancelEditProfile">Отмена</button></form></section>
+      <section class="page hidden" id="otherPage"><h2 id="otherTitle">Чаты</h2><p class="details" id="otherDescription">Этот раздел добавим позже.</p></section>
     </main>
     <nav class="bottom-nav">
       <button class="nav-button active" data-page="market"><span class="icon">⌕</span><span>Маркетплейс</span></button>
@@ -130,7 +161,7 @@
       { id: 6, name: "Планшет", price: 180, condition: "Отличное состояние", description: "Демонстрационный товар.", image: "📟", photo: null }
     ];
     let nextId = 7, selectedProduct = null, pendingPhoto = null, photoDataUrl = null;
-    const pageIds = ["marketPage", "confirmPage", "resultPage", "createPage", "otherPage"];
+    const pageIds = ["marketPage", "confirmPage", "resultPage", "createPage", "profilePage", "myListingsPage", "favoritesPage", "editProfilePage", "otherPage"];
     function getPage(id) { return document.getElementById(id); }
     function showPage(id) {
       pageIds.forEach(pageId => getPage(pageId).classList.add("hidden"));
@@ -152,6 +183,10 @@
       image.setAttribute("role", "img"); image.setAttribute("aria-label", product.name);
       return image;
     }
+    let userListingIds = (() => { try { return JSON.parse(localStorage.getItem("reloop-my-listings") || "[]"); } catch (_) { return []; } })();
+    let favoriteIds = (() => { try { return JSON.parse(localStorage.getItem("reloop-favorites") || "[]"); } catch (_) { return []; } })();
+    function saveFavorites() { try { localStorage.setItem("reloop-favorites", JSON.stringify(favoriteIds)); } catch (_) {} }
+    function saveUserListings() { try { localStorage.setItem("reloop-my-listings", JSON.stringify(userListingIds)); } catch (_) {} }
     function renderProducts(query = "") {
       const grid = getPage("productGrid"), normalizedQuery = query.trim().toLowerCase();
       const filtered = products.filter(product => (product.name + " " + product.description).toLowerCase().includes(normalizedQuery));
@@ -166,7 +201,10 @@
         const price = document.createElement("div"); price.className = "product-price"; price.textContent = formatPrice(product.price);
         const buy = document.createElement("button"); buy.className = "primary-button"; buy.textContent = "Купить"; buy.addEventListener("click", () => openConfirmation(product));
         const offer = document.createElement("button"); offer.className = "secondary-button"; offer.textContent = "Предложить цену"; offer.addEventListener("click", () => alert("Торг подключим следующим шагом!"));
-        card.append(makeProductImage(product), name, condition, price, buy, offer); grid.appendChild(card);
+        const favorite = document.createElement("button"); favorite.type = "button"; favorite.className = "favorite-button"; favorite.textContent = favoriteIds.includes(product.id) ? "♥" : "♡";
+        favorite.addEventListener("click", () => { favoriteIds = favoriteIds.includes(product.id) ? favoriteIds.filter(id => id !== product.id) : [...favoriteIds, product.id]; saveFavorites(); renderProducts(getPage("searchInput").value); updateProfileView(); });
+        const actions = document.createElement("div"); actions.className = "product-actions"; actions.append(favorite, buy);
+        card.append(makeProductImage(product), name, condition, price, actions, offer); grid.appendChild(card);
       });
     }
     function openConfirmation(product) {
@@ -217,7 +255,8 @@
       if (pendingPhoto && !photoDataUrl) {
         error.textContent = "Подожди, пока загрузится предпросмотр фотографии."; error.classList.remove("hidden"); return;
       }
-      products.unshift({ id: nextId++, name, price, condition: "Объявление пользователя", description, image: "📦", photo: photoDataUrl });
+      const newProduct = { id: nextId++, name, price, condition: "Объявление пользователя", description, image: "📦", photo: photoDataUrl };
+      products.unshift(newProduct); userListingIds.push(newProduct.id); saveUserListings();
       resetListingForm(); getPage("searchInput").value = ""; renderProducts(); setActiveNav("market"); showPage("marketPage");
       alert("Объявление добавлено в каталог на этом устройстве!");
     });
@@ -239,6 +278,8 @@
         } else if (page === "create") {
           resetListingForm();
           showPage("createPage");
+        } else if (page === "profile") {
+          showProfile();
         } else {
           const titles = { profile: "Профиль", chats: "Чаты", more: "Ещё" };
           const descriptions = {
@@ -253,6 +294,66 @@
       });
     });
 
+    function getProfile() {
+      try { return JSON.parse(localStorage.getItem("reloop-profile") || "null"); } catch (_) { return null; }
+    }
+    function updateProfileView() {
+      const profile = getProfile(); if (!profile) return;
+      getPage("profileDisplayName").textContent = profile.name;
+      getPage("profileDisplayUsername").textContent = profile.username;
+      getPage("myListingsCount").textContent = products.filter(p => userListingIds.includes(p.id)).length;
+      getPage("myFavoritesCount").textContent = favoriteIds.length;
+      const avatar = getPage("profileAvatar");
+      if (profile.avatar) { avatar.replaceChildren(); const img = document.createElement("img"); img.src = profile.avatar; img.alt = "Фото профиля"; img.style.cssText = "width:100%;height:100%;object-fit:cover;border-radius:50%"; avatar.appendChild(img); }
+      else avatar.textContent = (profile.name || "U").trim().charAt(0).toUpperCase() || "♙";
+    }
+    function renderProductCollection(gridId, collection) {
+      const grid = getPage(gridId); grid.replaceChildren();
+      if (!collection.length) { const empty = document.createElement("p"); empty.className = "empty-state"; empty.textContent = gridId === "myListingsGrid" ? "У тебя пока нет объявлений. Добавь первый товар!" : "В избранном пока пусто. Нажми ♡ на понравившемся товаре."; grid.appendChild(empty); return; }
+      collection.forEach(product => {
+        const card = document.createElement("article"); card.className = "product-card";
+        const name = document.createElement("div"); name.className = "product-name"; name.textContent = product.name;
+        const condition = document.createElement("div"); condition.className = "product-condition"; condition.textContent = product.condition;
+        const price = document.createElement("div"); price.className = "product-price"; price.textContent = formatPrice(product.price);
+        const view = document.createElement("button"); view.className = "primary-button"; view.textContent = "Посмотреть товар"; view.addEventListener("click", () => openConfirmation(product));
+        card.append(makeProductImage(product), name, condition, price, view);
+        const action = document.createElement("button"); action.className = "secondary-button";
+        if (gridId === "myListingsGrid") {
+          action.textContent = "Удалить объявление";
+          action.addEventListener("click", () => { userListingIds = userListingIds.filter(id => id !== product.id); products.splice(products.findIndex(p => p.id === product.id), 1); favoriteIds = favoriteIds.filter(id => id !== product.id); saveUserListings(); saveFavorites(); renderProductCollection("myListingsGrid", products.filter(p => userListingIds.includes(p.id))); renderProducts(getPage("searchInput").value); updateProfileView(); });
+        } else {
+          action.textContent = "Убрать из избранного";
+          action.addEventListener("click", () => { favoriteIds = favoriteIds.filter(id => id !== product.id); saveFavorites(); renderProductCollection("favoritesGrid", products.filter(p => favoriteIds.includes(p.id))); renderProducts(getPage("searchInput").value); updateProfileView(); });
+        }
+        card.appendChild(action); grid.appendChild(card);
+      });
+    }
+    function showProfile() { updateProfileView(); setActiveNav("profile"); showPage("profilePage"); }
+    getPage("myListingsButton").addEventListener("click", () => { renderProductCollection("myListingsGrid", products.filter(p => userListingIds.includes(p.id))); showPage("myListingsPage"); });
+    getPage("favoritesButton").addEventListener("click", () => { renderProductCollection("favoritesGrid", products.filter(p => favoriteIds.includes(p.id))); showPage("favoritesPage"); });
+    getPage("editProfileButton").addEventListener("click", openEditProfile);
+    getPage("editProfileMenuButton").addEventListener("click", openEditProfile);
+    function openEditProfile() { const profile = getProfile() || {name:"",username:""}; getPage("editProfileName").value = profile.name || ""; getPage("editProfileUsername").value = profile.username || ""; getPage("editProfileError").classList.add("hidden"); showPage("editProfilePage"); }
+    getPage("cancelEditProfile").addEventListener("click", showProfile);
+    document.querySelectorAll("[data-back-profile]").forEach(button => button.addEventListener("click", showProfile));
+    getPage("newListingFromProfile").addEventListener("click", () => { resetListingForm(); setActiveNav("create"); showPage("createPage"); });
+    getPage("profilePhotoInput").addEventListener("change", event => {
+      const file = event.target.files && event.target.files[0]; if (!file) return;
+      if (!file.type.startsWith("image/")) { alert("Выбери файл изображения."); event.target.value = ""; return; }
+      if (file.size > 5 * 1024 * 1024) { alert("Фото должно быть не больше 5 МБ."); event.target.value = ""; return; }
+      const reader = new FileReader();
+      reader.onload = () => { const profile = getProfile(); if (!profile) return; profile.avatar = reader.result; try { localStorage.setItem("reloop-profile", JSON.stringify(profile)); } catch (_) { alert("Не удалось сохранить фото на этом устройстве."); return; } updateProfileView(); };
+      reader.readAsDataURL(file);
+    });
+    getPage("editProfileForm").addEventListener("submit", event => {
+      event.preventDefault(); const name = getPage("editProfileName").value.trim(); const username = getPage("editProfileUsername").value.trim().replace(/^@+/, ""); const error = getPage("editProfileError");
+      if (!name) { error.textContent = "Введи имя."; error.classList.remove("hidden"); return; }
+      if (!/^[a-zA-Z0-9_]{3,24}$/.test(username)) { error.textContent = "Юзернейм: 3–24 символа, латинские буквы, цифры или _. Пример: @king"; error.classList.remove("hidden"); return; }
+      const profile = {...(getProfile() || {}), name, username:"@" + username};
+      try { localStorage.setItem("reloop-profile", JSON.stringify(profile)); } catch (_) { error.textContent = "Не удалось сохранить изменения на этом устройстве."; error.classList.remove("hidden"); return; }
+      updateProfileView(); showProfile();
+    });
+
     // Первый запуск: попросить пользователя создать локальный профиль.
     const savedProfile = (() => {
       try { return JSON.parse(localStorage.getItem("reloop-profile") || "null"); }
@@ -263,8 +364,8 @@
       getPage("welcomeScreen").classList.add("hidden");
       getPage("mainApp").classList.remove("hidden");
       getPage("otherTitle").textContent = "Профиль";
-      getPage("otherDescription").textContent =
-        "Имя: " + profile.name + "\\nЮзернейм: " + profile.username;
+      updateProfileView();
+      getPage("otherDescription").textContent = "Имя: " + profile.name + "\nЮзернейм: " + profile.username;
     }
 
     getPage("welcomeForm").addEventListener("submit", event => {
