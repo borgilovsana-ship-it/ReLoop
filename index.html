@@ -130,16 +130,6 @@
       </section>
       <section class="page hidden" id="profilePage">
         <h2>Мой профиль</h2>
-        <div class="form-card" style="margin-bottom:18px">
-          <p class="form-label" style="margin-top:0">Мой баланс</p>
-          <div id="balanceAmount" style="font-size:30px;font-weight:800;margin:8px 0 14px">₽10 000</div>
-          <label class="form-label" for="topUpAmount">Пополнить тестовыми деньгами (₽)</label>
-          <input class="form-input" id="topUpAmount" type="number" min="1" max="1000000000" step="1" placeholder="Например, 5000">
-          <button type="button" class="primary-button" id="topUpButton" style="margin-top:10px">＋ Пополнить баланс</button>
-          <p class="notice">Это виртуальные деньги для демонстрации, настоящие платежи не выполняются.</p>
-          <h3 style="font-size:16px;margin:18px 0 10px">История операций</h3>
-          <div id="balanceHistory"><p class="details">Операций пока нет.</p></div>
-        </div>
         <div class="profile-top"><div class="avatar-wrap"><div id="profileAvatar" class="profile-avatar">♙</div><label class="avatar-edit" for="profilePhotoInput" aria-label="Изменить фото профиля">✎<input id="profilePhotoInput" type="file" accept="image/*"></label></div>
         <h2 id="profileDisplayName" style="margin:0;font-size:22px">Пользователь</h2><p class="profile-username" id="profileDisplayUsername">@username</p><button type="button" class="secondary-button" id="editProfileButton" style="max-width:220px;margin-top:16px">Редактировать профиль</button></div>
         <div class="profile-stats"><div class="profile-stat"><strong id="myListingsCount">0</strong><span>Мои объявления</span></div><div class="profile-stat"><strong id="mySoldCount">0</strong><span>Продано</span></div><div class="profile-stat"><strong id="myFavoritesCount">0</strong><span>Избранное</span></div></div>
@@ -152,7 +142,28 @@
         <label class="form-label" for="editProfileUsername">Юзернейм *</label><input class="form-input" id="editProfileUsername" maxlength="25" placeholder="@king" required>
         <p class="notice">Юзернейм: 3–24 символа, латинские буквы, цифры или _. Фото можно изменить нажатием на аватар.</p><p class="error hidden" id="editProfileError"></p>
         <button type="submit" class="primary-button">Сохранить изменения</button><button type="button" class="secondary-button" id="cancelEditProfile">Отмена</button></form></section>
-      <section class="page hidden" id="otherPage"><h2 id="otherTitle">Чаты</h2><p class="details" id="otherDescription">Этот раздел добавим позже.</p></section>
+      <section class="page hidden" id="otherPage">
+        <h2 id="otherTitle">Чаты</h2>
+        <p class="details" id="otherDescription">Этот раздел добавим позже.</p>
+        <div id="moreFinance" class="hidden">
+          <div class="profile-stats" style="grid-template-columns:1fr;gap:10px;margin-top:0">
+            <div class="profile-stat" style="text-align:left;padding:16px"><span>Баланс</span><strong id="balanceAmount" style="font-size:26px;margin:8px 0 0">₽10 000</strong></div>
+            <div class="profile-stat" style="text-align:left;padding:16px"><span>Общая прибыль</span><strong id="totalProfitAmount" style="font-size:26px;margin:8px 0 0">₽0</strong><p class="notice" style="margin-bottom:0">Прибыль от продаж появится, когда будет подключена система продаж.</p></div>
+            <div class="profile-stat" style="text-align:left;padding:16px"><span>Потрачено</span><strong id="totalSpentAmount" style="font-size:26px;margin:8px 0 0">₽0</strong></div>
+          </div>
+          <div class="form-card" style="margin:16px 0">
+            <h3 style="font-size:17px;margin-bottom:12px">Пополнение баланса</h3>
+            <label class="form-label" for="topUpAmount">Сумма пополнения (₽)</label>
+            <input class="form-input" id="topUpAmount" type="number" min="1" max="1000000000" step="1" placeholder="Например, 5000">
+            <button type="button" class="primary-button" id="topUpButton" style="margin-top:10px">＋ Пополнить баланс</button>
+            <p class="notice">Это виртуальные деньги для демонстрации, настоящие платежи не выполняются.</p>
+          </div>
+          <div class="form-card">
+            <h3 style="font-size:17px;margin-bottom:10px">История операций</h3>
+            <div id="balanceHistory"><p class="details">Операций пока нет.</p></div>
+          </div>
+        </div>
+      </section>
     </main>
     <nav class="bottom-nav">
       <button class="nav-button active" data-page="market"><span class="icon">⌕</span><span>Маркетплейс</span></button>
@@ -262,6 +273,8 @@
     }
     const BALANCE_KEY = "reloop-balance-rub";
     const BALANCE_HISTORY_KEY = "reloop-balance-history";
+    const TOTAL_SPENT_KEY = "reloop-total-spent-rub";
+    const TOTAL_PROFIT_KEY = "reloop-total-profit-rub";
     function readBalance() {
       try {
         const saved = localStorage.getItem(BALANCE_KEY);
@@ -288,13 +301,32 @@
     function formatRub(amount) {
       return "₽" + Math.round(Number(amount)).toLocaleString("ru-RU");
     }
+    function readTotalSpent() {
+      try {
+        const saved = localStorage.getItem(TOTAL_SPENT_KEY);
+        if (saved !== null) return Math.max(0, Number(saved) || 0);
+        const total = getBalanceHistory().filter(item => item.type === "purchase").reduce((sum, item) => sum + Math.max(0, Number(item.amount) || 0), 0);
+        localStorage.setItem(TOTAL_SPENT_KEY, String(total));
+        return total;
+      } catch (_) { return 0; }
+    }
+    function saveTotalSpent(amount) {
+      try { localStorage.setItem(TOTAL_SPENT_KEY, String(Math.max(0, Math.round(amount)))); } catch (_) {}
+    }
+    function readTotalProfit() {
+      try { return Math.max(0, Number(localStorage.getItem(TOTAL_PROFIT_KEY)) || 0); } catch (_) { return 0; }
+    }
     function renderBalance() {
       balanceRub = readBalance();
       const amount = getPage("balanceAmount");
       if (amount) amount.textContent = formatRub(balanceRub);
+      const history = getBalanceHistory();
+      const spentEl = getPage("totalSpentAmount");
+      if (spentEl) spentEl.textContent = formatRub(readTotalSpent());
+      const profitEl = getPage("totalProfitAmount");
+      if (profitEl) profitEl.textContent = formatRub(readTotalProfit());
       const historyBox = getPage("balanceHistory");
       if (!historyBox) return;
-      const history = getBalanceHistory();
       historyBox.replaceChildren();
       if (!history.length) {
         const empty = document.createElement("p"); empty.className = "details"; empty.textContent = "Операций пока нет."; historyBox.appendChild(empty); return;
@@ -396,6 +428,7 @@
       }
       balanceRub -= costRub;
       saveBalance();
+      saveTotalSpent(readTotalSpent() + costRub);
       addBalanceOperation("purchase", costRub, "Покупка: " + selectedProduct.name);
       getPage("resultText").textContent = "Ты купил «" + selectedProduct.name + "» за " + formatRub(costRub) + ". Сумма списана с виртуального баланса. Реальная оплата и доставка не оформляются.";
       renderBalance();
@@ -463,6 +496,8 @@
           };
           getPage("otherTitle").textContent = titles[page] || "ReLoop";
           getPage("otherDescription").textContent = descriptions[page] || "";
+          getPage("moreFinance").classList.toggle("hidden", page !== "more");
+          if (page === "more") renderBalance();
           showPage("otherPage");
         }
       });
