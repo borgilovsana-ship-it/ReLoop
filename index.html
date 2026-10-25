@@ -52,11 +52,37 @@
     .nav-button .icon { font-size: 21px; line-height: 1; }
     .nav-button.active { color: #111; font-weight: 700; }
     .nav-button.create .icon { display: flex; align-items: center; justify-content: center; width: 27px; height: 27px; border-radius: 9px; background: #171717; color: white; font-size: 23px; }
+
+    .welcome-screen { position: fixed; inset: 0; z-index: 100; display: flex; align-items: center; justify-content: center; padding: 24px; background: #fff; }
+    .welcome-card { width: 100%; max-width: 390px; }
+    .welcome-logo { font-size: 34px; font-weight: 800; letter-spacing: -1.5px; margin-bottom: 34px; }
+    .welcome-logo span { color: #888; }
+    .welcome-card h1 { font-size: 29px; line-height: 1.15; margin-bottom: 12px; }
+    .welcome-subtitle { color: #777; font-size: 14px; line-height: 1.5; margin-bottom: 26px; }
+    .welcome-card .form-label { margin-top: 16px; }
+    .welcome-card .primary-button { margin-top: 22px; min-height: 48px; font-size: 14px; }
+    .welcome-error { color: #c52222; font-size: 13px; margin-top: 10px; }
     .hidden { display: none !important; }
   </style>
 </head>
 <body>
-  <div class="app">
+
+  <section class="welcome-screen" id="welcomeScreen">
+    <div class="welcome-card">
+      <div class="welcome-logo">Re<span>Loop</span></div>
+      <h1>Добро пожаловать в ReLoop</h1>
+      <p class="welcome-subtitle">Создай свой профиль, чтобы начать пользоваться маркетплейсом.</p>
+      <form id="welcomeForm">
+        <label class="form-label" for="welcomeUsername">Твой юзернейм *</label>
+        <input class="form-input" id="welcomeUsername" maxlength="25" placeholder="@king" autocomplete="username" required>
+        <label class="form-label" for="welcomeName">Твоё имя *</label>
+        <input class="form-input" id="welcomeName" maxlength="40" placeholder="Например, Алекс" autocomplete="name" required>
+        <p class="welcome-error hidden" id="welcomeError"></p>
+        <button class="primary-button" type="submit">Начать</button>
+      </form>
+    </div>
+  </section>
+  <div class="app" id="mainApp">
     <header class="market-header" id="marketHeader">
       <div class="app-title">Re<span>Loop</span></div>
       <label class="search-box"><span>⌕</span><input id="searchInput" type="search" placeholder="Искать товары..." aria-label="Поиск товаров"></label>
@@ -226,6 +252,54 @@
         }
       });
     });
+
+    // Первый запуск: попросить пользователя создать локальный профиль.
+    const savedProfile = (() => {
+      try { return JSON.parse(localStorage.getItem("reloop-profile") || "null"); }
+      catch (_) { return null; }
+    })();
+
+    function applyProfile(profile) {
+      getPage("welcomeScreen").classList.add("hidden");
+      getPage("mainApp").classList.remove("hidden");
+      getPage("otherTitle").textContent = "Профиль";
+      getPage("otherDescription").textContent =
+        "Имя: " + profile.name + "\\nЮзернейм: " + profile.username;
+    }
+
+    getPage("welcomeForm").addEventListener("submit", event => {
+      event.preventDefault();
+      const usernameInput = getPage("welcomeUsername");
+      const name = getPage("welcomeName").value.trim();
+      let username = usernameInput.value.trim();
+      const error = getPage("welcomeError");
+
+      // Разрешаем вводить как @king, так и king, но сохраняем с @.
+      username = username.replace(/^@+/, "");
+      if (!/^[a-zA-Z0-9_]{3,24}$/.test(username)) {
+        error.textContent = "Юзернейм: от 3 до 24 символов — латинские буквы, цифры или _. Например, @king";
+        error.classList.remove("hidden");
+        return;
+      }
+      if (!name) {
+        error.textContent = "Введи своё имя.";
+        error.classList.remove("hidden");
+        return;
+      }
+
+      const profile = { username: "@" + username, name };
+      try { localStorage.setItem("reloop-profile", JSON.stringify(profile)); }
+      catch (_) {}
+      applyProfile(profile);
+    });
+
+    if (savedProfile && savedProfile.username && savedProfile.name) {
+      applyProfile(savedProfile);
+    } else {
+      getPage("mainApp").classList.add("hidden");
+      getPage("welcomeScreen").classList.remove("hidden");
+    }
+
     renderProducts();
   </script>
 </body>
