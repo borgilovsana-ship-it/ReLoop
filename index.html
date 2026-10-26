@@ -139,8 +139,8 @@
       <section class="page hidden" id="favoritesPage"><button class="back-button" data-back-profile>← В профиль</button><h2>Избранное</h2><div class="product-grid" id="favoritesGrid"></div></section>
       <section class="page hidden" id="editProfilePage"><button class="back-button" data-back-profile>← В профиль</button><h2>Редактировать профиль</h2><form id="editProfileForm" class="form-card">
         <label class="form-label" for="editProfileName">Имя *</label><input class="form-input" id="editProfileName" maxlength="40" required>
-        <label class="form-label" for="editProfileUsername">Юзернейм *</label><input class="form-input" id="editProfileUsername" maxlength="25" placeholder="@king" required>
-        <p class="notice">Юзернейм: 3–24 символа, латинские буквы, цифры или _. Фото можно изменить нажатием на аватар.</p><p class="error hidden" id="editProfileError"></p>
+        <label class="form-label" for="editProfileUsername">Юзернейм</label><input class="form-input" id="editProfileUsername" maxlength="25" placeholder="@king" readonly aria-readonly="true">
+        <p class="notice">Юзернейм нельзя изменить после регистрации. Можно изменить имя, а фото — нажатием на аватар.</p><p class="error hidden" id="editProfileError"></p>
         <button type="submit" class="primary-button">Сохранить изменения</button><button type="button" class="secondary-button" id="cancelEditProfile">Отмена</button></form></section>
       <section class="page hidden" id="otherPage">
         <h2 id="otherTitle">Чаты</h2>
@@ -570,7 +570,7 @@
     getPage("favoritesButton").addEventListener("click", () => { renderProductCollection("favoritesGrid", products.filter(p => favoriteIds.includes(p.id))); showPage("favoritesPage"); });
     getPage("editProfileButton").addEventListener("click", openEditProfile);
     getPage("editProfileMenuButton").addEventListener("click", openEditProfile);
-    function openEditProfile() { const profile = getProfile() || {name:"",username:""}; getPage("editProfileName").value = profile.name || ""; getPage("editProfileUsername").value = profile.username || ""; getPage("editProfileError").classList.add("hidden"); showPage("editProfilePage"); }
+    function openEditProfile() { const profile = getProfile() || {name:"",username:""}; getPage("editProfileName").value = profile.name || ""; getPage("editProfileUsername").value = profile.username || ""; getPage("editProfileUsername").readOnly = true; getPage("editProfileError").classList.add("hidden"); showPage("editProfilePage"); }
     getPage("cancelEditProfile").addEventListener("click", showProfile);
     document.querySelectorAll("[data-back-profile]").forEach(button => button.addEventListener("click", showProfile));
     getPage("newListingFromProfile").addEventListener("click", () => { resetListingForm(); setActiveNav("create"); showPage("createPage"); });
@@ -583,10 +583,9 @@
       reader.readAsDataURL(file);
     });
     getPage("editProfileForm").addEventListener("submit", event => {
-      event.preventDefault(); const name = getPage("editProfileName").value.trim(); const username = getPage("editProfileUsername").value.trim().replace(/^@+/, ""); const error = getPage("editProfileError");
+      event.preventDefault(); const name = getPage("editProfileName").value.trim(); const error = getPage("editProfileError");
       if (!name) { error.textContent = "Введи имя."; error.classList.remove("hidden"); return; }
-      if (!/^[a-zA-Z0-9_]{3,24}$/.test(username)) { error.textContent = "Юзернейм: 3–24 символа, латинские буквы, цифры или _. Пример: @king"; error.classList.remove("hidden"); return; }
-      const profile = {...(getProfile() || {}), name, username:"@" + username};
+      const profile = {...(getProfile() || {}), name};
       try { localStorage.setItem("reloop-profile", JSON.stringify(profile)); } catch (_) { error.textContent = "Не удалось сохранить изменения на этом устройстве."; error.classList.remove("hidden"); return; }
       updateProfileView(); showProfile();
     });
