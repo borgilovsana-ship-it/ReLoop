@@ -190,6 +190,7 @@
       <button class="nav-button" data-page="more"><span class="icon">☰</span><span>Ещё</span></button>
     </nav>
   </div>
+  <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
   <script>
     const products = [];
     
@@ -311,6 +312,19 @@
       alert("Баланс пополнен на " + formatRub(amount) + "!");
     });
     function makeProductImage(product) {
+      if (Number(product.id) === 3001) {
+        const viewer = document.createElement("model-viewer");
+        viewer.className = "product-image product-3d";
+        viewer.src = "./iphone_16_-_free.glb";
+        viewer.alt = "3D-модель Apple iPhone 16";
+        viewer.setAttribute("camera-controls", "");
+        viewer.setAttribute("auto-rotate", "");
+        viewer.setAttribute("rotation-per-second", "18deg");
+        viewer.setAttribute("shadow-intensity", "1");
+        viewer.setAttribute("exposure", "1");
+        viewer.setAttribute("loading", "lazy");
+        return viewer;
+      }
       if (Number(product.id) === 1001) {
         const viewer = document.createElement("iframe");
         viewer.className = "product-image product-3d";
@@ -356,6 +370,10 @@
       localStorage.setItem("reloop-favorites", JSON.stringify(favoriteIds));
       localStorage.setItem("reloop-inventory", JSON.stringify(inventoryItems));
     } catch (_) {}
+    // Единственный стартовый товар: 3D-модель iPhone 16, загруженная в корень репозитория.
+    if (!products.some(product => Number(product.id) === 3001)) {
+      products.unshift({ id: 3001, name: "Apple iPhone 16 · 128 GB", price: 520, condition: "Хорошее состояние", description: "Б/у iPhone 16 с интерактивной 3D-моделью.", image: "📱", photo: null, category: "phone" });
+    }
     function saveFavorites() { try { localStorage.setItem("reloop-favorites", JSON.stringify(favoriteIds)); } catch (_) {} }
     function saveUserListings() {
       try {
