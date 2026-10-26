@@ -686,7 +686,7 @@
           sell.addEventListener("click", () => {
             const listing = { ...product, id: nextId++, condition: "Товар из инвентаря", description: (product.description || "") + "\\nПродажа из инвентаря пользователя.", photo: product.photo || null };
             products.unshift(listing); userListingIds.push(listing.id); item.status = "listed"; item.listingId = listing.id;
-            saveUserListings(); saveInventory(); renderInventory(); renderProducts(getPage("searchInput").value); updateProfileView();
+            saveUserListings(); saveInventory(); createBotChatsForListing(listing); renderInventory(); renderProducts(getPage("searchInput").value); updateProfileView();
           });
           const remove = document.createElement("button"); remove.className = "secondary-button"; remove.textContent = "Убрать из инвентаря";
           remove.addEventListener("click", () => {
