@@ -312,7 +312,7 @@
       alert("Баланс пополнен на " + formatRub(amount) + "!");
     });
     function makeProductImage(product) {
-      if (Number(product.id) === 3001 || Number(product.id) === 3003 || Number(product.id) === 3004 || Number(product.id) === 3005 || Number(product.id) === 3006) {
+      if (Number(product.id) === 3001 || Number(product.id) === 3003 || Number(product.id) === 3004 || Number(product.id) === 3005 || Number(product.id) === 3006 || Number(product.id) === 3007) {
         const viewer = document.createElement("model-viewer");
         viewer.className = "product-image product-3d";
         const modelConfig = {
@@ -320,7 +320,8 @@
           3003: { src: "./iphone_16_-_free.glb", alt: "3D-модель Apple iPhone 16" },
           3004: { src: "./apple_iphone_18_pro_max_burgundy_2026.glb", alt: "3D-модель Apple iPhone 18 Pro Max Burgundy" },
           3005: { src: "./iphone_7_rose.glb", alt: "3D-модель Apple iPhone 7 Rose Gold" },
-          3006: { src: "./black_apple_ipad_pro_13_m4.glb", alt: "3D-модель Apple iPad Pro 13 M4 Space Black" }
+          3006: { src: "./black_apple_ipad_pro_13_m4.glb", alt: "3D-модель Apple iPad Pro 13 M4 Space Black" },
+          3007: { src: "./macbook_pro_14-inch_m5.glb", alt: "3D-модель Apple MacBook Pro 14 дюймов M5" }
         }[Number(product.id)];
         viewer.src = modelConfig.src;
         viewer.alt = modelConfig.alt;
@@ -392,6 +393,9 @@
     }
     if (!products.some(product => Number(product.id) === 3006)) {
       products.unshift({ id: 3006, name: "Apple iPad Pro 13″ M4 · Space Black · 256 GB", price: 1100, condition: "Отличное состояние", description: "iPad Pro 13 дюймов с чипом M4 в цвете Space Black и интерактивной 3D-моделью.", image: "📱", photo: null, category: "tablet" });
+    }
+    if (!products.some(product => Number(product.id) === 3007)) {
+      products.unshift({ id: 3007, name: "Apple MacBook Pro 14″ M5 · Space Black · 512 GB", price: 1600, condition: "Новое", description: "MacBook Pro 14 дюймов с чипом M5 в цвете Space Black и интерактивной 3D-моделью.", image: "💻", photo: null, category: "laptop" });
     }
     function saveFavorites() { try { localStorage.setItem("reloop-favorites", JSON.stringify(favoriteIds)); } catch (_) {} }
     function saveUserListings() {
