@@ -108,7 +108,7 @@
   <div class="app" id="mainApp">
     <header class="market-header" id="marketHeader">
       <div class="app-title">Re<span>Loop</span></div>
-      <div class="search-row"><label class="search-box"><span>⌕</span><input id="searchInput" type="search" placeholder="Искать товары..." aria-label="Поиск товаров"></label></div><div class="category-row" id="categoryRow" aria-label="Категории товаров"><button type="button" class="category-button active" data-category="all">Все</button><button type="button" class="category-button" data-category="tablet">Планшеты</button><button type="button" class="category-button" data-category="laptop">Ноутбуки</button></div>
+      <div class="search-row"><label class="search-box"><span>⌕</span><input id="searchInput" type="search" placeholder="Искать товары..." aria-label="Поиск товаров"></label></div><div class="category-row" id="categoryRow" aria-label="Категории товаров"><button type="button" class="category-button active" data-category="all">Все</button><button type="button" class="category-button" data-category="phone">Телефоны</button><button type="button" class="category-button" data-category="tablet">Планшеты</button><button type="button" class="category-button" data-category="laptop">Ноутбуки</button></div>
     </header>
     <main>
       <section class="page" id="marketPage"><h2 id="marketHeading">Популярные товары</h2><div class="product-grid" id="productGrid"></div></section>
@@ -312,6 +312,16 @@
       alert("Баланс пополнен на " + formatRub(amount) + "!");
     });
     function makeProductImage(product) {
+      if (Number(product.id) === 3002) {
+        const viewer = document.createElement("iframe");
+        viewer.className = "product-image product-3d";
+        viewer.src = "https://sketchfab.com/models/241c86e6f0404233a9b6a6f38532efc3/embed?ui_theme=dark&autostart=1&camera=0";
+        viewer.title = "3D-модель Samsung Galaxy S25 Ultra Titanium Black";
+        viewer.setAttribute("allow", "autoplay; fullscreen; xr-spatial-tracking");
+        viewer.setAttribute("allowfullscreen", "");
+        viewer.setAttribute("loading", "lazy");
+        return viewer;
+      }
       if (Number(product.id) === 3001) {
         const viewer = document.createElement("model-viewer");
         viewer.className = "product-image product-3d";
@@ -370,9 +380,12 @@
       localStorage.setItem("reloop-favorites", JSON.stringify(favoriteIds));
       localStorage.setItem("reloop-inventory", JSON.stringify(inventoryItems));
     } catch (_) {}
-    // Единственный стартовый товар: 3D-модель iPhone 16, загруженная в корень репозитория.
+    // Стартовые телефоны ReLoop: iPhone 16 и Samsung Galaxy S25 Ultra.
     if (!products.some(product => Number(product.id) === 3001)) {
       products.unshift({ id: 3001, name: "Apple iPhone 16 · 128 GB", price: 520, condition: "Хорошее состояние", description: "Б/у iPhone 16 с интерактивной 3D-моделью.", image: "📱", photo: null, category: "phone" });
+    }
+    if (!products.some(product => Number(product.id) === 3002)) {
+      products.unshift({ id: 3002, name: "Samsung Galaxy S25 Ultra · 256 GB · Titanium Black", price: 650, condition: "Отличное состояние", description: "Samsung Galaxy S25 Ultra в чёрном титановом цвете. Интерактивная 3D-модель Sketchfab.", image: "📱", photo: null, category: "phone" });
     }
     function saveFavorites() { try { localStorage.setItem("reloop-favorites", JSON.stringify(favoriteIds)); } catch (_) {} }
     function saveUserListings() {
