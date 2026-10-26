@@ -140,10 +140,11 @@
         <div class="profile-top"><div class="avatar-wrap"><div id="profileAvatar" class="profile-avatar">♙</div><label class="avatar-edit" for="profilePhotoInput" aria-label="Изменить фото профиля">✎<input id="profilePhotoInput" type="file" accept="image/*"></label></div>
         <h2 id="profileDisplayName" style="margin:0;font-size:22px">Пользователь</h2><p class="profile-username" id="profileDisplayUsername">@username</p><button type="button" class="secondary-button" id="editProfileButton" style="max-width:220px;margin-top:16px">Редактировать профиль</button></div>
         <div class="profile-stats"><div class="profile-stat"><strong id="myListingsCount">0</strong><span>Мои объявления</span></div><div class="profile-stat"><strong id="mySoldCount">0</strong><span>Продано</span></div><div class="profile-stat"><strong id="myFavoritesCount">0</strong><span>Избранное</span></div></div>
-        <div class="profile-menu"><button type="button" id="myListingsButton"><span class="menu-icon">▦</span><span>Мои объявления</span><span class="menu-arrow">›</span></button><button type="button" id="favoritesButton"><span class="menu-icon">♡</span><span>Избранное</span><span class="menu-arrow">›</span></button><button type="button" id="editProfileMenuButton"><span class="menu-icon">⚙</span><span>Настройки профиля</span><span class="menu-arrow">›</span></button></div>
+        <div class="profile-menu"><button type="button" id="myListingsButton"><span class="menu-icon">▦</span><span>Мои объявления</span><span class="menu-arrow">›</span></button><button type="button" id="favoritesButton"><span class="menu-icon">♡</span><span>Избранное</span><span class="menu-arrow">›</span></button><button type="button" id="inventoryButton"><span class="menu-icon">▣</span><span>Инвентарь</span><span class="menu-arrow">›</span></button><button type="button" id="editProfileMenuButton"><span class="menu-icon">⚙</span><span>Настройки профиля</span><span class="menu-arrow">›</span></button></div>
         <p class="notice">Профиль пока сохраняется на этом устройстве. Чтобы другие пользователи интернета видели его, позже подключим общую базу данных и сервер.</p></section>
       <section class="page hidden" id="myListingsPage"><button class="back-button" data-back-profile>← В профиль</button><h2>Мои объявления</h2><div class="product-grid" id="myListingsGrid"></div><button class="primary-button" id="newListingFromProfile">＋ Создать объявление</button></section>
       <section class="page hidden" id="favoritesPage"><button class="back-button" data-back-profile>← В профиль</button><h2>Избранное</h2><div class="product-grid" id="favoritesGrid"></div></section>
+      <section class="page hidden" id="inventoryPage"><button class="back-button" data-back-profile>← В профиль</button><h2>Инвентарь</h2><div class="summary"><div class="summary-row"><span>Всего предметов</span><strong id="inventoryCount">0</strong></div><div class="summary-row total"><span>Общая стоимость</span><strong id="inventoryValue">₽0</strong></div></div><p class="notice">Здесь хранятся купленные товары. Выставленные на продажу предметы можно вернуть обратно.</p><div class="product-grid" id="inventoryGrid"></div></section>
       <section class="page hidden" id="editProfilePage"><button class="back-button" data-back-profile>← В профиль</button><h2>Редактировать профиль</h2><form id="editProfileForm" class="form-card">
         <label class="form-label" for="editProfileName">Имя *</label><input class="form-input" id="editProfileName" maxlength="40" required>
         <label class="form-label" for="editProfileUsername">Юзернейм</label><input class="form-input" id="editProfileUsername" maxlength="25" placeholder="@king" readonly aria-readonly="true">
@@ -413,6 +414,8 @@
     }
     let userListingIds = (() => { try { return JSON.parse(localStorage.getItem("reloop-my-listings") || "[]"); } catch (_) { return []; } })();
     let favoriteIds = (() => { try { return JSON.parse(localStorage.getItem("reloop-favorites") || "[]"); } catch (_) { return []; } })();
+    let inventoryItems = (() => { try { const saved = JSON.parse(localStorage.getItem("reloop-inventory") || "[]"); return Array.isArray(saved) ? saved : []; } catch (_) { return []; } })();
+    function saveInventory() { try { localStorage.setItem("reloop-inventory", JSON.stringify(inventoryItems)); } catch (_) { alert("Не удалось сохранить инвентарь на этом устройстве."); } }
     (() => {
       try {
         const saved = JSON.parse(localStorage.getItem("reloop-my-products") || "[]");
@@ -480,7 +483,9 @@
       saveBalance();
       saveTotalSpent(readTotalSpent() + costRub);
       addBalanceOperation("purchase", costRub, "Покупка: " + selectedProduct.name);
-      getPage("resultText").textContent = "Ты купил «" + selectedProduct.name + "» за " + formatRub(costRub) + ". Сумма списана с виртуального баланса. Реальная оплата и доставка не оформляются.";
+      inventoryItems.unshift({ id: Date.now() + Math.floor(Math.random() * 1000), product: { ...selectedProduct }, status: "owned", listingId: null, purchasedPrice: Number(selectedProduct.price) });
+      saveInventory();
+      getPage("resultText").textContent = "Ты купил «" + selectedProduct.name + "» за " + formatRub(costRub) + ". Товар добавлен в инвентарь. Сумма списана с виртуального баланса. Реальная оплата и доставка не оформляются.";
       renderBalance();
       showPage("resultPage");
     });
@@ -601,7 +606,48 @@
         card.appendChild(action); grid.appendChild(card);
       });
     }
+    function renderInventory() {
+      const grid = getPage("inventoryGrid");
+      grid.replaceChildren();
+      getPage("inventoryCount").textContent = String(inventoryItems.length);
+      getPage("inventoryValue").textContent = formatRub(inventoryItems.reduce((sum, item) => sum + Math.round(Number(item.purchasedPrice ?? item.product.price) * 100), 0));
+      if (!inventoryItems.length) {
+        const empty = document.createElement("p"); empty.className = "empty-state"; empty.textContent = "Инвентарь пока пуст. Купленные товары появятся здесь."; grid.appendChild(empty); return;
+      }
+      inventoryItems.forEach(item => {
+        const product = item.product;
+        const card = document.createElement("article"); card.className = "product-card";
+        const name = document.createElement("div"); name.className = "product-name"; name.textContent = product.name;
+        const status = document.createElement("div"); status.className = "product-condition"; status.textContent = item.status === "listed" ? "Выставлен на продажу" : "В инвентаре";
+        const price = document.createElement("div"); price.className = "product-price"; price.textContent = formatRub(Math.round(Number(item.purchasedPrice ?? product.price) * 100));
+        card.append(makeProductImage(product), name, status, price);
+        if (item.status === "owned") {
+          const sell = document.createElement("button"); sell.className = "primary-button"; sell.textContent = "Выставить на продажу";
+          sell.addEventListener("click", () => {
+            const listing = { ...product, id: nextId++, condition: "Товар из инвентаря", description: (product.description || "") + "\\nПродажа из инвентаря пользователя.", photo: product.photo || null };
+            products.unshift(listing); userListingIds.push(listing.id); item.status = "listed"; item.listingId = listing.id;
+            saveUserListings(); saveInventory(); renderInventory(); renderProducts(getPage("searchInput").value); updateProfileView();
+          });
+          const remove = document.createElement("button"); remove.className = "secondary-button"; remove.textContent = "Убрать из инвентаря";
+          remove.addEventListener("click", () => {
+            if (!confirm("Убрать «" + product.name + "» из инвентаря?")) return;
+            inventoryItems = inventoryItems.filter(entry => entry.id !== item.id); saveInventory(); renderInventory();
+          });
+          card.append(sell, remove);
+        } else {
+          const restore = document.createElement("button"); restore.className = "primary-button"; restore.textContent = "Вернуть в инвентарь";
+          restore.addEventListener("click", () => {
+            userListingIds = userListingIds.filter(id => id !== item.listingId);
+            const index = products.findIndex(p => p.id === item.listingId); if (index !== -1) products.splice(index, 1);
+            item.status = "owned"; item.listingId = null; saveUserListings(); saveInventory(); renderInventory(); renderProducts(getPage("searchInput").value); updateProfileView();
+          });
+          card.appendChild(restore);
+        }
+        grid.appendChild(card);
+      });
+    }
     function showProfile() { updateProfileView(); setActiveNav("profile"); showPage("profilePage"); }
+    getPage("inventoryButton").addEventListener("click", () => { renderInventory(); showPage("inventoryPage"); });
     getPage("myListingsButton").addEventListener("click", () => { renderProductCollection("myListingsGrid", products.filter(p => userListingIds.includes(p.id))); showPage("myListingsPage"); });
     getPage("favoritesButton").addEventListener("click", () => { renderProductCollection("favoritesGrid", products.filter(p => favoriteIds.includes(p.id))); showPage("favoritesPage"); });
     getPage("editProfileButton").addEventListener("click", openEditProfile);
