@@ -20,6 +20,7 @@
     .category-row { display:flex; gap:8px; overflow-x:auto; padding:12px 0 2px; }
     .category-button { flex:0 0 auto; border:1px solid #ddd; border-radius:999px; background:#fff; color:#333; padding:9px 13px; font-size:12px; font-weight:700; }
     .category-button.active { background:#171717; border-color:#171717; color:#fff; }
+    .category-button.mechanics { border-style:dashed; }
     .page { padding: 8px 12px 24px; }
     .page h2 { font-size: 21px; margin: 6px 4px 16px; }
     .product-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
@@ -108,7 +109,7 @@
   <div class="app" id="mainApp">
     <header class="market-header" id="marketHeader">
       <div class="app-title">Re<span>Loop</span></div>
-      <div class="search-row"><label class="search-box"><span>⌕</span><input id="searchInput" type="search" placeholder="Искать товары..." aria-label="Поиск товаров"></label></div><div class="category-row" id="categoryRow" aria-label="Категории товаров"><button type="button" class="category-button active" data-category="all">Все</button><button type="button" class="category-button" data-category="phone">Телефоны</button><button type="button" class="category-button" data-category="tablet">Планшеты</button><button type="button" class="category-button" data-category="laptop">Ноутбуки</button></div>
+      <div class="search-row"><label class="search-box"><span>⌕</span><input id="searchInput" type="search" placeholder="Искать товары..." aria-label="Поиск товаров"></label></div><div class="category-row" id="categoryRow" aria-label="Категории товаров"><button type="button" class="category-button active" data-category="all">Все</button><button type="button" class="category-button" data-category="phone">Телефоны</button><button type="button" class="category-button" data-category="tablet">Планшеты</button><button type="button" class="category-button" data-category="laptop">Ноутбуки</button><button type="button" class="category-button mechanics" data-category="mechanics">⚙ Механика</button></div>
     </header>
     <main>
       <section class="page" id="marketPage"><h2 id="marketHeading">Популярные товары</h2><div class="product-grid" id="productGrid"></div></section>
@@ -210,7 +211,7 @@
       activeCategory = category;
       getPage("categoryRow").classList.remove("hidden");
       document.querySelectorAll("[data-category]").forEach(button => button.classList.toggle("active", button.dataset.category === category));
-      getPage("marketHeading").textContent = category === "all" ? "Все товары" : category === "phone" ? "Телефоны" : category === "tablet" ? "Планшеты" : "Ноутбуки";
+      getPage("marketHeading").textContent = category === "all" ? "Все товары" : category === "phone" ? "Телефоны" : category === "tablet" ? "Планшеты" : category === "laptop" ? "Ноутбуки" : "Механика";
       renderProducts(getPage("searchInput").value);
     }
     let nextId = 3000, selectedProduct = null, photoDataUrl = null;
@@ -440,10 +441,10 @@
     }
     function renderProducts(query = "") {
       const grid = getPage("productGrid"), normalizedQuery = query.trim().toLowerCase();
-      const filtered = products.filter(product => (activeCategory === "all" || getProductCategory(product) === activeCategory) && (product.name + " " + product.description).toLowerCase().includes(normalizedQuery));
+      const filtered = products.filter(product => (activeCategory === "all" || (activeCategory === "mechanics" ? /механик|механизм|запчаст|инструмент|детал/i.test(product.name + " " + product.description) : getProductCategory(product) === activeCategory)) && (product.name + " " + product.description).toLowerCase().includes(normalizedQuery));
       grid.replaceChildren();
       if (!filtered.length) {
-        const empty = document.createElement("p"); empty.className = "empty-state"; empty.textContent = "Товары не найдены"; grid.appendChild(empty); return;
+        const empty = document.createElement("p"); empty.className = "empty-state"; empty.textContent = activeCategory === "mechanics" ? "Раздел «Механика» создан. Скоро здесь появятся механические детали, инструменты и механизмы." : "Товары не найдены"; grid.appendChild(empty); return;
       }
       filtered.forEach(product => {
         const card = document.createElement("article"); card.className = "product-card";
