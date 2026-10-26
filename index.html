@@ -127,7 +127,6 @@
         <button class="back-button" id="cancelCreateTop">← Назад</button><h2>Новое объявление</h2>
         <form id="listingForm" class="form-card">
           <label class="form-label" for="listingInventoryItem">Предмет из инвентаря *</label><select class="form-input" id="listingInventoryItem" required><option value="">Выбери предмет из инвентаря</option></select><p class="notice" id="listingInventoryNotice">Выставить можно только предмет, который уже находится в твоём инвентаре.</p>
-          <label class="form-label" for="listingName">Название предмета</label><input class="form-input" id="listingName" maxlength="80" placeholder="Сначала выбери предмет" readonly required>
           <label class="form-label" for="listingCategory">Категория</label><select class="form-input" id="listingCategory" disabled><option value="phone">Телефон</option><option value="tablet">Планшет</option><option value="laptop">Ноутбук</option></select>
           <label class="form-label" for="listingDescription">Описание *</label><textarea class="form-input" id="listingDescription" maxlength="1000" placeholder="Состояние, комплектация и другие детали..." required></textarea>
           <label class="form-label" for="listingPrice">Цена в рублях (₽) *</label><input class="form-input" id="listingPrice" type="number" min="0.01" max="1000000000" step="1" placeholder="25000" required>
@@ -493,7 +492,7 @@
       available.forEach(item => { const option = document.createElement("option"); option.value = String(item.id); option.textContent = item.product.name; select.appendChild(option); });
       select.disabled = available.length === 0;
       getPage("listingInventoryNotice").textContent = available.length ? "Выставить можно только предмет, который уже находится в твоём инвентаре." : "Пока нечего выставлять. Сначала купи товар — он появится в инвентаре.";
-      getPage("listingName").value = ""; getPage("listingCategory").value = "phone"; getPage("listingDescription").value = "";
+      getPage("listingCategory").value = "phone"; getPage("listingDescription").value = "";
       getPage("listingPrice").value = ""; photoDataUrl = null;
     }
     function resetListingForm() {
@@ -502,9 +501,9 @@
     }
     getPage("listingInventoryItem").addEventListener("change", () => {
       const item = inventoryItems.find(entry => String(entry.id) === getPage("listingInventoryItem").value && entry.status === "owned");
-      if (!item) { getPage("listingName").value = ""; getPage("listingDescription").value = ""; getPage("photoPreview").style.display = "none"; photoDataUrl = null; return; }
+      if (!item) { getPage("listingDescription").value = ""; getPage("photoPreview").style.display = "none"; photoDataUrl = null; return; }
       const product = item.product;
-      getPage("listingName").value = product.name; getPage("listingCategory").value = product.category || "phone";
+      getPage("listingCategory").value = product.category || "phone";
       getPage("listingDescription").value = product.description || product.condition || "";
       getPage("listingPrice").value = String(Math.round(Number(item.purchasedPrice ?? product.price) * 100));
       photoDataUrl = product.photo || null; pendingPhoto = null;
@@ -528,7 +527,7 @@
     getPage("listingForm").addEventListener("submit", event => {
       event.preventDefault();
       const inventoryItem = inventoryItems.find(item => String(item.id) === getPage("listingInventoryItem").value && item.status === "owned");
-      const name = getPage("listingName").value.trim(), category = getPage("listingCategory").value, description = getPage("listingDescription").value.trim(), enteredPriceRub = Number(getPage("listingPrice").value), price = enteredPriceRub / 100, error = getPage("formError");
+      const name = inventoryItem ? inventoryItem.product.name : "", category = getPage("listingCategory").value, description = getPage("listingDescription").value.trim(), enteredPriceRub = Number(getPage("listingPrice").value), price = enteredPriceRub / 100, error = getPage("formError");
       if (!inventoryItem) {
         error.textContent = "Нельзя создать объявление: выбери предмет, который есть в инвентаре."; error.classList.remove("hidden"); return;
       }
