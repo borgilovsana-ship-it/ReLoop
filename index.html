@@ -312,12 +312,16 @@
       alert("Баланс пополнен на " + formatRub(amount) + "!");
     });
     function makeProductImage(product) {
-      if (Number(product.id) === 3001 || Number(product.id) === 3003) {
+      if (Number(product.id) === 3001 || Number(product.id) === 3003 || Number(product.id) === 3004) {
         const viewer = document.createElement("model-viewer");
         viewer.className = "product-image product-3d";
-        const isProMax = Number(product.id) === 3001;
-        viewer.src = isProMax ? "./iphone_16_pro_max.glb" : "./iphone_16_-_free.glb";
-        viewer.alt = isProMax ? "3D-модель Apple iPhone 16 Pro Max" : "3D-модель Apple iPhone 16";
+        const modelConfig = {
+          3001: { src: "./iphone_16_pro_max.glb", alt: "3D-модель Apple iPhone 16 Pro Max" },
+          3003: { src: "./iphone_16_-_free.glb", alt: "3D-модель Apple iPhone 16" },
+          3004: { src: "./apple_iphone_18_pro_max_burgundy_2026.glb", alt: "3D-модель Apple iPhone 18 Pro Max Burgundy" }
+        }[Number(product.id)];
+        viewer.src = modelConfig.src;
+        viewer.alt = modelConfig.alt;
         viewer.setAttribute("camera-controls", "");
         viewer.setAttribute("auto-rotate", "");
         viewer.setAttribute("rotation-per-second", "18deg");
@@ -371,12 +375,15 @@
       localStorage.setItem("reloop-favorites", JSON.stringify(favoriteIds));
       localStorage.setItem("reloop-inventory", JSON.stringify(inventoryItems));
     } catch (_) {}
-    // Стартовые телефоны ReLoop: iPhone 16 Pro Max и iPhone 16.
+    // Стартовые телефоны ReLoop: iPhone 18 Pro Max Burgundy, iPhone 16 Pro Max и iPhone 16.
     if (!products.some(product => Number(product.id) === 3001)) {
       products.unshift({ id: 3001, name: "Apple iPhone 16 Pro Max · 256 GB · Natural Titanium", price: 780, condition: "Отличное состояние", description: "iPhone 16 Pro Max с интерактивной 3D-моделью, которую можно вращать на 360°.", image: "📱", photo: null, category: "phone" });
     }
     if (!products.some(product => Number(product.id) === 3003)) {
       products.unshift({ id: 3003, name: "Apple iPhone 16 · 128 GB", price: 520, condition: "Хорошее состояние", description: "Б/у iPhone 16 с интерактивной 3D-моделью.", image: "📱", photo: null, category: "phone" });
+    }
+    if (!products.some(product => Number(product.id) === 3004)) {
+      products.unshift({ id: 3004, name: "Apple iPhone 18 Pro Max · Burgundy · 256 GB", price: 1200, condition: "Новое", description: "iPhone 18 Pro Max в цвете Burgundy с интерактивной 3D-моделью.", image: "📱", photo: null, category: "phone" });
     }
     function saveFavorites() { try { localStorage.setItem("reloop-favorites", JSON.stringify(favoriteIds)); } catch (_) {} }
     function saveUserListings() {
