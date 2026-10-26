@@ -30,12 +30,6 @@
     .product-card { min-width: 0; padding: 9px; border: 1px solid #ededed; border-radius: 16px; overflow: hidden; background: #fff; }
     .product-image { width: 100%; aspect-ratio: 1 / 1; border-radius: 11px; background: #f5f5f5; display: flex; align-items: center; justify-content: center; font-size: clamp(42px, 12vw, 68px); object-fit: contain; margin-bottom: 10px; }
     img.product-image { display: block; }
-    .model-preview { flex-direction: column; gap: 7px; padding: 10px; font-size: 14px; }
-    .model-preview-icon { font-size: clamp(42px, 12vw, 68px); line-height: 1.2; }
-    .model-preview-label { color: #666; font-size: 12px; font-weight: 700; }
-    .model-load-button { border: 0; border-radius: 9px; padding: 8px 10px; background: #171717; color: #fff; font-size: 12px; font-weight: 700; }
-    .model-load-button:disabled { opacity: .65; }
-    .model-preview .product-3d { margin: 0; width: 100%; height: 100%; aspect-ratio: 1 / 1; }
 
     iframe.product-3d { display:block; width:100%; height:auto; aspect-ratio:1/1; border:0; border-radius:11px; background:#f2f3f5; margin-bottom:10px; }
     .product-name { font-size: 14px; line-height: 1.35; font-weight: 700; min-height: 36px; overflow-wrap: anywhere; }
@@ -326,76 +320,57 @@
       alert("Баланс пополнен на " + formatRub(amount) + "!");
     });
     function makeProductImage(product) {
-      const modelConfigs = {
-        3001: { src: "./iphone_16_pro_max.glb", alt: "3D-модель Apple iPhone 16 Pro Max" },
-        3003: { src: "./iphone_16_-_free.glb", alt: "3D-модель Apple iPhone 16" },
-        3004: { src: "./apple_iphone_18_pro_max_burgundy_2026.glb", alt: "3D-модель Apple iPhone 18 Pro Max Burgundy" },
-        3005: { src: "./iphone_7_rose.glb", alt: "3D-модель Apple iPhone 7 Rose Gold" },
-        3006: { src: "./black_apple_ipad_pro_13_m4.glb", alt: "3D-модель Apple iPad Pro 13 M4 Space Black" },
-        3007: { src: "./macbook_pro_14-inch_m5.glb", alt: "3D-модель Apple MacBook Pro 14 дюймов M5" },
-        3008: { src: "./samsung_galaxy_s25_ultra.glb", alt: "3D-модель Samsung Galaxy S25 Ultra" },
-        3009: { src: "./iphone_15_pro.glb", alt: "3D-модель Apple iPhone 15 Pro" },
-        3014: { src: "./iphone_14_pro.glb", alt: "3D-модель Apple iPhone 14 Pro" },
-        3015: { src: "./nothing_phone_2.glb", alt: "3D-модель Nothing Phone (2)" }
+      const sketchfabModels = {
       };
-      const modelConfig = modelConfigs[Number(product.id)];
-      const createViewer = () => {
-        if (modelConfig) {
-          const viewer = document.createElement("model-viewer");
-          viewer.className = "product-image product-3d";
-          viewer.src = modelConfig.src;
-          viewer.alt = modelConfig.alt;
-          viewer.setAttribute("camera-controls", "");
-          viewer.setAttribute("auto-rotate", "");
-          viewer.setAttribute("rotation-per-second", "18deg");
-          viewer.setAttribute("shadow-intensity", "1");
-          viewer.setAttribute("exposure", "1");
-          viewer.setAttribute("loading", "eager");
-          return viewer;
-        }
+      const sketchfabModel = sketchfabModels[Number(product.id)];
+      if (sketchfabModel) {
+        const viewer = document.createElement("iframe");
+        viewer.className = "product-image product-3d";
+        viewer.src = "https://sketchfab.com/models/" + sketchfabModel.id + "/embed?autostart=1&ui_theme=light&ui_infos=0";
+        viewer.title = sketchfabModel.title;
+        viewer.setAttribute("allow", "autoplay; fullscreen; xr-spatial-tracking");
+        viewer.setAttribute("allowfullscreen", "");
+        viewer.setAttribute("loading", "lazy");
+        return viewer;
+      }
+      if ([3001, 3003, 3004, 3005, 3006, 3007, 3008, 3009, 3014, 3015].includes(Number(product.id))) {
+        const viewer = document.createElement("model-viewer");
+        viewer.className = "product-image product-3d";
+        const modelConfig = {
+          3001: { src: "./iphone_16_pro_max.glb", alt: "3D-модель Apple iPhone 16 Pro Max" },
+          3003: { src: "./iphone_16_-_free.glb", alt: "3D-модель Apple iPhone 16" },
+          3004: { src: "./apple_iphone_18_pro_max_burgundy_2026.glb", alt: "3D-модель Apple iPhone 18 Pro Max Burgundy" },
+          3005: { src: "./iphone_7_rose.glb", alt: "3D-модель Apple iPhone 7 Rose Gold" },
+          3006: { src: "./black_apple_ipad_pro_13_m4.glb", alt: "3D-модель Apple iPad Pro 13 M4 Space Black" },
+          3007: { src: "./macbook_pro_14-inch_m5.glb", alt: "3D-модель Apple MacBook Pro 14 дюймов M5" },
+          3008: { src: "./samsung_galaxy_s25_ultra.glb", alt: "3D-модель Samsung Galaxy S25 Ultra" },
+          3009: { src: "./iphone_15_pro.glb", alt: "3D-модель Apple iPhone 15 Pro" },
+          3014: { src: "./iphone_14_pro.glb", alt: "3D-модель Apple iPhone 14 Pro" },
+          3015: { src: "./nothing_phone_2.glb", alt: "3D-модель Nothing Phone (2)" }
+        }[Number(product.id)];
+        viewer.src = modelConfig.src;
+        viewer.alt = modelConfig.alt;
+        viewer.setAttribute("camera-controls", "");
+        viewer.setAttribute("auto-rotate", "");
+        viewer.setAttribute("rotation-per-second", "18deg");
+        viewer.setAttribute("shadow-intensity", "1");
+        viewer.setAttribute("exposure", "1");
+        viewer.setAttribute("loading", "lazy");
+        return viewer;
+      }
+      if (Number(product.id) === 1001) {
         const viewer = document.createElement("iframe");
         viewer.className = "product-image product-3d";
         viewer.src = "https://sketchfab.com/models/98895eae0d5c421dbc7fc834a61b947a/embed?ui_theme=light";
         viewer.title = "3D-модель Apple iPhone 15 Pro Max";
         viewer.setAttribute("allow", "autoplay; fullscreen; xr-spatial-tracking");
         viewer.setAttribute("allowfullscreen", "");
+        viewer.setAttribute("loading", "lazy");
         return viewer;
-      };
-      if (modelConfig || Number(product.id) === 1001) {
-        const preview = document.createElement("div");
-        preview.className = "product-image model-preview";
-        preview.setAttribute("role", "group");
-        preview.setAttribute("aria-label", product.name + " — 3D-модель доступна");
-        const icon = document.createElement("div");
-        icon.className = "model-preview-icon";
-        icon.textContent = product.image || (product.category === "laptop" ? "💻" : product.category === "tablet" ? "📱" : "📱");
-        const label = document.createElement("span");
-        label.className = "model-preview-label";
-        label.textContent = "3D-модель";
-        const button = document.createElement("button");
-        button.type = "button";
-        button.className = "model-load-button";
-        button.textContent = "Посмотреть 3D";
-        button.addEventListener("click", () => {
-          button.disabled = true;
-          button.textContent = "Загрузка…";
-          const viewer = createViewer();
-          viewer.addEventListener("error", () => {
-            preview.replaceChildren(icon, label);
-            const error = document.createElement("span");
-            error.className = "model-preview-label";
-            error.textContent = "Не удалось загрузить 3D";
-            preview.appendChild(error);
-          }, { once: true });
-          preview.replaceChildren(viewer);
-        }, { once: true });
-        preview.append(icon, label, button);
-        return preview;
       }
       if (product.photo) {
         const image = document.createElement("img");
         image.className = "product-image"; image.src = product.photo; image.alt = product.name;
-        image.loading = "lazy";
         return image;
       }
       const image = document.createElement("div");
