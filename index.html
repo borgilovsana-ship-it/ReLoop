@@ -108,7 +108,7 @@
   <div class="app" id="mainApp">
     <header class="market-header" id="marketHeader">
       <div class="app-title">Re<span>Loop</span></div>
-      <div class="search-row"><label class="search-box"><span>⌕</span><input id="searchInput" type="search" placeholder="Искать товары..." aria-label="Поиск товаров"></label></div><div class="category-row" id="categoryRow" aria-label="Категории товаров"><button type="button" class="category-button active" data-category="all">Все</button><button type="button" class="category-button" data-category="phone">Телефоны</button><button type="button" class="category-button" data-category="tablet">Планшеты</button><button type="button" class="category-button" data-category="laptop">Ноутбуки</button></div>
+      <div class="search-row"><label class="search-box"><span>⌕</span><input id="searchInput" type="search" placeholder="Искать товары..." aria-label="Поиск товаров"></label></div><div class="category-row" id="categoryRow" aria-label="Категории товаров"><button type="button" class="category-button active" data-category="all">Все</button><button type="button" class="category-button" data-category="tablet">Планшеты</button><button type="button" class="category-button" data-category="laptop">Ноутбуки</button></div>
     </header>
     <main>
       <section class="page" id="marketPage"><h2 id="marketHeading">Популярные товары</h2><div class="product-grid" id="productGrid"></div></section>
@@ -126,7 +126,7 @@
         <button class="back-button" id="cancelCreateTop">← Назад</button><h2>Новое объявление</h2>
         <form id="listingForm" class="form-card">
           <label class="form-label" for="listingInventoryItem">Предмет из инвентаря *</label><select class="form-input" id="listingInventoryItem" required><option value="">Выбери предмет из инвентаря</option></select><p class="notice" id="listingInventoryNotice">Выставить можно только предмет, который уже находится в твоём инвентаре.</p>
-          <label class="form-label" for="listingCategory">Категория</label><select class="form-input" id="listingCategory" disabled><option value="phone">Телефон</option><option value="tablet">Планшет</option><option value="laptop">Ноутбук</option></select>
+          <label class="form-label" for="listingCategory">Категория</label><select class="form-input" id="listingCategory" disabled><option value="tablet">Планшет</option><option value="laptop">Ноутбук</option></select>
           <label class="form-label" for="listingDescription">Описание *</label><textarea class="form-input" id="listingDescription" maxlength="1000" placeholder="Состояние, комплектация и другие детали..." required></textarea>
           <label class="form-label" for="listingPrice">Цена в рублях (₽) *</label><input class="form-input" id="listingPrice" type="number" min="0.01" max="1000000000" step="1" placeholder="25000" required>
           <img id="photoPreview" class="photo-preview" alt="Предпросмотр товара">
@@ -433,6 +433,20 @@
         if (saved.length) nextId = Math.max(nextId, ...saved.map(product => Number(product.id) + 1));
       } catch (_) {}
     })();
+    // Удаляем телефоны из каталога, пользовательских объявлений, избранного и инвентаря.
+    const isPhoneProduct = product => /iphone|galaxy|pixel|xiaomi|oneplus|nothing phone|xperia|motorola|huawei|honor|oppo|vivo|zenfone|smartphone|телефон|смартфон/i.test(String(product?.name || "")) || product?.category === "phone";
+    for (let i = products.length - 1; i >= 0; i--) {
+      if (isPhoneProduct(products[i])) products.splice(i, 1);
+    }
+    userListingIds = userListingIds.filter(id => products.some(product => product.id === id));
+    favoriteIds = favoriteIds.filter(id => products.some(product => product.id === id));
+    inventoryItems = inventoryItems.filter(item => !isPhoneProduct(item?.product || item));
+    try {
+      localStorage.setItem("reloop-my-listings", JSON.stringify(userListingIds));
+      localStorage.setItem("reloop-my-products", JSON.stringify(products.filter(product => userListingIds.includes(product.id))));
+      localStorage.setItem("reloop-favorites", JSON.stringify(favoriteIds));
+      localStorage.setItem("reloop-inventory", JSON.stringify(inventoryItems));
+    } catch (_) {}
     function saveFavorites() { try { localStorage.setItem("reloop-favorites", JSON.stringify(favoriteIds)); } catch (_) {} }
     function saveUserListings() {
       try {
