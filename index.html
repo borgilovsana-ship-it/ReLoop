@@ -303,7 +303,7 @@
       renderProducts(getPage("searchInput").value);
     }
     let nextId = 3000, selectedProduct = null, pendingPhoto = null, photoDataUrl = null;
-    const pageIds = ["marketPage", "confirmPage", "resultPage", "createPage", "profilePage", "myListingsPage", "favoritesPage", "editProfilePage", "otherPage"];
+    const pageIds = ["marketPage", "confirmPage", "resultPage", "createPage", "profilePage", "myListingsPage", "favoritesPage", "inventoryPage", "editProfilePage", "otherPage"];
     function getPage(id) { return document.getElementById(id); }
     function showPage(id) {
       pageIds.forEach(pageId => getPage(pageId).classList.add("hidden"));
