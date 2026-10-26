@@ -26,6 +26,7 @@
     .product-card { min-width: 0; padding: 9px; border: 1px solid #ededed; border-radius: 16px; overflow: hidden; background: #fff; }
     .product-image { width: 100%; aspect-ratio: 1 / 1; border-radius: 11px; background: #f5f5f5; display: flex; align-items: center; justify-content: center; font-size: clamp(42px, 12vw, 68px); object-fit: contain; margin-bottom: 10px; }
     img.product-image { display: block; }
+    iframe.product-3d { display:block; width:100%; height:auto; aspect-ratio:1/1; border:0; border-radius:11px; background:#f2f3f5; margin-bottom:10px; }
     .product-name { font-size: 14px; line-height: 1.35; font-weight: 700; min-height: 36px; overflow-wrap: anywhere; }
     .product-condition { color: #888; font-size: 11px; margin: 5px 0 8px; }
     .product-price { font-size: 20px; font-weight: 800; margin-bottom: 10px; }
@@ -401,6 +402,16 @@
       alert("Баланс пополнен на " + formatRub(amount) + "!");
     });
     function makeProductImage(product) {
+      if (Number(product.id) === 1001) {
+        const viewer = document.createElement("iframe");
+        viewer.className = "product-image product-3d";
+        viewer.src = "https://sketchfab.com/models/98895eae0d5c421dbc7fc834a61b947a/embed?ui_theme=light";
+        viewer.title = "3D-модель Apple iPhone 15 Pro Max";
+        viewer.setAttribute("allow", "autoplay; fullscreen; xr-spatial-tracking");
+        viewer.setAttribute("allowfullscreen", "");
+        viewer.setAttribute("loading", "lazy");
+        return viewer;
+      }
       if (product.photo) {
         const image = document.createElement("img");
         image.className = "product-image"; image.src = product.photo; image.alt = product.name;
