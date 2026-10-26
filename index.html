@@ -82,6 +82,37 @@
     .phone-back { position: relative; flex: 1 1 0; min-width: 0; height: 100%; border-radius: 14% / 7%; background: linear-gradient(120deg, #c9ced5, #737b88 45%, #30343c); border: 1px solid #e2e5ea; box-shadow: 4px 7px 9px #0003, inset 1px 0 1px #ffffffaa; }
     .phone-camera-plate { position: absolute; z-index: 1; top: 5%; left: 5%; width: 43%; height: 39%; border-radius: 18%; background: linear-gradient(135deg, #c6cbd2, #555c67); border: 1px solid #8d949e; box-shadow: 1px 2px 3px #0005; }
 
+
+    /* Distinct rear-camera designs so each phone family has its own silhouette. */
+    .phone-variant-iphone .phone-back { border-radius: 17% / 8%; }
+    .phone-variant-iphone .phone-camera-plate { width: 43%; height: 37%; border-radius: 24%; background: linear-gradient(135deg,#252a32,#090b10); }
+    .phone-variant-iphone .phone-camera-dot { width: 31%; top: 8%; left: 8%; }
+    .phone-variant-iphone .phone-camera-dot.two { top: 49%; left: 49%; }
+    .phone-variant-iphone-pro .phone-camera-plate { width: 48%; height: 43%; border-radius: 22%; }
+    .phone-variant-iphone-pro .phone-camera-dot { width: 29%; top: 7%; left: 8%; }
+    .phone-variant-iphone-pro .phone-camera-dot.two { top: 45%; left: 48%; }
+    .phone-variant-iphone-pro .phone-camera-dot.three { display:block; top: 45%; left: 8%; }
+    .phone-variant-iphone-pro .phone-camera-flash { top: 15%; left: 62%; width: 10%; }
+    .phone-variant-samsung .phone-back { border-radius: 12% / 6%; }
+    .phone-variant-samsung .phone-camera-plate { left: 9%; top: 7%; width: 27%; height: 64%; }
+    .phone-variant-pixel .phone-back { border-radius: 15% / 7%; }
+    .phone-variant-pixel .phone-camera-plate { left: 0; top: 13%; width: 100%; height: 19%; border-radius: 10% / 25%; }
+    .phone-variant-nothing .phone-back { background: linear-gradient(135deg,#f2f3f4,#c9cdd2); }
+    .phone-variant-nothing .phone-camera-plate { width: 43%; height: 37%; border-radius: 24%; background: #e1e4e8; border: 2px solid #9da4ad; }
+    .phone-variant-nothing .phone-back::after { content:""; position:absolute; left:22%; right:22%; top:49%; height:2px; background:#aeb4bc; box-shadow:0 7px 0 #aeb4bc, 0 14px 0 #aeb4bc; opacity:.8; }
+    .phone-variant-fold .phone-device { width: 46%; height: 72%; }
+    .phone-variant-fold .phone-back { border-radius: 10% / 5%; }
+    .phone-variant-fold .phone-camera-plate { width: 28%; height: 58%; border-radius: 18%; }
+    .phone-variant-fold .phone-camera-dot { width: 65%; left: 17%; top: 5%; }
+    .phone-variant-fold .phone-camera-dot.two { left: 17%; top: 35%; }
+    .phone-variant-fold .phone-camera-dot.three { display:block; left:17%; top:65%; }
+    .phone-variant-flip .phone-device { width: 37%; height: 63%; }
+    .phone-variant-flip .phone-back { border-radius: 18% / 10%; }
+    .phone-variant-flip .phone-camera-plate { left: 8%; top: 8%; width: 80%; height: 28%; border-radius: 18%; }
+    .phone-variant-flip .phone-camera-dot { width: 32%; top: 15%; left: 12%; }
+    .phone-variant-flip .phone-camera-dot.two { top: 15%; left: 55%; }
+    .phone-variant-flip .phone-camera-dot.three { display:none; }
+    .phone-variant-android .phone-camera-plate { width: 38%; height: 31%; border-radius: 16%; }
     .product-name { font-size: 14px; line-height: 1.35; font-weight: 700; min-height: 36px; overflow-wrap: anywhere; }
     .product-condition { color: #888; font-size: 11px; margin: 5px 0 8px; }
     .product-price { font-size: 20px; font-weight: 800; margin-bottom: 10px; }
