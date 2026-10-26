@@ -126,12 +126,13 @@
       <section class="page hidden" id="createPage">
         <button class="back-button" id="cancelCreateTop">← Назад</button><h2>Новое объявление</h2>
         <form id="listingForm" class="form-card">
-          <label class="form-label" for="listingName">Название предмета *</label><input class="form-input" id="listingName" maxlength="80" placeholder="Например, iPhone 13" required>
-          <label class="form-label" for="listingCategory">Категория *</label><select class="form-input" id="listingCategory" required><option value="phone">Телефон</option><option value="tablet">Планшет</option><option value="laptop">Ноутбук</option></select>
+          <label class="form-label" for="listingInventoryItem">Предмет из инвентаря *</label><select class="form-input" id="listingInventoryItem" required><option value="">Выбери предмет из инвентаря</option></select><p class="notice" id="listingInventoryNotice">Выставить можно только предмет, который уже находится в твоём инвентаре.</p>
+          <label class="form-label" for="listingName">Название предмета</label><input class="form-input" id="listingName" maxlength="80" placeholder="Сначала выбери предмет" readonly required>
+          <label class="form-label" for="listingCategory">Категория</label><select class="form-input" id="listingCategory" disabled><option value="phone">Телефон</option><option value="tablet">Планшет</option><option value="laptop">Ноутбук</option></select>
           <label class="form-label" for="listingDescription">Описание *</label><textarea class="form-input" id="listingDescription" maxlength="1000" placeholder="Состояние, комплектация и другие детали..." required></textarea>
           <label class="form-label" for="listingPrice">Цена в рублях (₽) *</label><input class="form-input" id="listingPrice" type="number" min="0.01" max="1000000000" step="1" placeholder="25000" required>
           <span class="form-label">Фотография предмета</span><label class="photo-picker" for="listingPhoto"><span id="photoLabel">＋ Выбрать фотографию</span><input id="listingPhoto" type="file" accept="image/*"></label><img id="photoPreview" class="photo-preview" alt="Предпросмотр товара">
-          <p class="notice">Укажи свою цену: чем дешевле предмет относительно условной цены категории, тем больше демо-покупателей напишут и тем быстрее появятся сообщения. Это симуляция, а не реальные покупатели. Объявление появится в каталоге на этом устройстве.</p><p class="error hidden" id="formError"></p>
+          <p class="notice">Выставляй только предметы из своего инвентаря. Выбери товар, укажи цену и описание. Чем дешевле цена, тем быстрее могут появиться сообщения от демо-покупателей. Это симуляция; объявление сохраняется на этом устройстве.</p><p class="error hidden" id="formError"></p>
           <button type="submit" class="primary-button">Опубликовать объявление</button><button type="button" class="secondary-button" id="cancelCreate">Отмена</button>
         </form>
       </section>
@@ -485,10 +486,31 @@
       showPage("resultPage");
     });
     getPage("homeButton").addEventListener("click", () => showPage("marketPage"));
+    function refreshListingInventoryOptions() {
+      const select = getPage("listingInventoryItem"), available = inventoryItems.filter(item => item.status === "owned");
+      select.replaceChildren();
+      const placeholder = document.createElement("option"); placeholder.value = ""; placeholder.textContent = available.length ? "Выбери предмет из инвентаря" : "Инвентарь пуст — сначала купи товар"; select.appendChild(placeholder);
+      available.forEach(item => { const option = document.createElement("option"); option.value = String(item.id); option.textContent = item.product.name; select.appendChild(option); });
+      select.disabled = available.length === 0;
+      getPage("listingInventoryNotice").textContent = available.length ? "Выставить можно только предмет, который уже находится в твоём инвентаре." : "Пока нечего выставлять. Сначала купи товар — он появится в инвентаре.";
+      getPage("listingName").value = ""; getPage("listingCategory").value = "phone"; getPage("listingDescription").value = "";
+      getPage("listingPrice").value = ""; photoDataUrl = null;
+    }
     function resetListingForm() {
-      getPage("listingForm").reset(); getPage("photoPreview").removeAttribute("src"); getPage("photoPreview").style.display = "none";
+      getPage("listingForm").reset(); refreshListingInventoryOptions(); getPage("photoPreview").removeAttribute("src"); getPage("photoPreview").style.display = "none";
       getPage("photoLabel").textContent = "＋ Выбрать фотографию"; getPage("formError").classList.add("hidden"); pendingPhoto = null; photoDataUrl = null;
     }
+    getPage("listingInventoryItem").addEventListener("change", () => {
+      const item = inventoryItems.find(entry => String(entry.id) === getPage("listingInventoryItem").value && entry.status === "owned");
+      if (!item) { getPage("listingName").value = ""; getPage("listingDescription").value = ""; getPage("photoPreview").style.display = "none"; photoDataUrl = null; return; }
+      const product = item.product;
+      getPage("listingName").value = product.name; getPage("listingCategory").value = product.category || "phone";
+      getPage("listingDescription").value = product.description || product.condition || "";
+      getPage("listingPrice").value = String(Math.round(Number(item.purchasedPrice ?? product.price) * 100));
+      photoDataUrl = product.photo || null; pendingPhoto = null;
+      if (photoDataUrl) { getPage("photoPreview").src = photoDataUrl; getPage("photoPreview").style.display = "block"; getPage("photoLabel").textContent = "Используется фото из инвентаря ✓"; }
+      else { getPage("photoPreview").removeAttribute("src"); getPage("photoPreview").style.display = "none"; getPage("photoLabel").textContent = "＋ Выбрать фотографию"; }
+    });
     getPage("listingPhoto").addEventListener("change", event => {
       const file = event.target.files && event.target.files[0]; if (!file) return;
       if (!file.type.startsWith("image/")) {
@@ -505,15 +527,19 @@
     });
     getPage("listingForm").addEventListener("submit", event => {
       event.preventDefault();
+      const inventoryItem = inventoryItems.find(item => String(item.id) === getPage("listingInventoryItem").value && item.status === "owned");
       const name = getPage("listingName").value.trim(), category = getPage("listingCategory").value, description = getPage("listingDescription").value.trim(), enteredPriceRub = Number(getPage("listingPrice").value), price = enteredPriceRub / 100, error = getPage("formError");
+      if (!inventoryItem) {
+        error.textContent = "Нельзя создать объявление: выбери предмет, который есть в инвентаре."; error.classList.remove("hidden"); return;
+      }
       if (!name || !description || !Number.isFinite(price) || price <= 0) {
-        error.textContent = "Заполни название, описание и корректную цену."; error.classList.remove("hidden"); return;
+        error.textContent = "Заполни описание и укажи корректную цену."; error.classList.remove("hidden"); return;
       }
       if (pendingPhoto && !photoDataUrl) {
         error.textContent = "Подожди, пока загрузится предпросмотр фотографии."; error.classList.remove("hidden"); return;
       }
-      const newProduct = { id: nextId++, name, price, condition: "Объявление пользователя", description, image: category === "laptop" ? "💻" : "📱", photo: photoDataUrl, category };
-      products.unshift(newProduct); userListingIds.push(newProduct.id); saveUserListings();
+      const newProduct = { ...inventoryItem.product, id: nextId++, name, price, condition: "Товар из инвентаря", description, image: category === "laptop" ? "💻" : category === "tablet" ? "📲" : "📱", photo: photoDataUrl || inventoryItem.product.photo || null, category };
+      products.unshift(newProduct); userListingIds.push(newProduct.id); inventoryItem.status = "listed"; inventoryItem.listingId = newProduct.id; saveUserListings(); saveInventory();
       createBotChatsForListing(newProduct);
       resetListingForm(); getPage("searchInput").value = ""; renderProducts(); setActiveNav("market"); showPage("marketPage");
       alert("Объявление добавлено в каталог на этом устройстве!");
