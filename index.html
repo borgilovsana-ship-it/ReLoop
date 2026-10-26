@@ -131,7 +131,7 @@
           <label class="form-label" for="listingDescription">Описание *</label><textarea class="form-input" id="listingDescription" maxlength="1000" placeholder="Состояние, комплектация и другие детали..." required></textarea>
           <label class="form-label" for="listingPrice">Цена в рублях (₽) *</label><input class="form-input" id="listingPrice" type="number" min="0.01" max="1000000000" step="1" placeholder="25000" required>
           <span class="form-label">Фотография предмета</span><label class="photo-picker" for="listingPhoto"><span id="photoLabel">＋ Выбрать фотографию</span><input id="listingPhoto" type="file" accept="image/*"></label><img id="photoPreview" class="photo-preview" alt="Предпросмотр товара">
-          <p class="notice">Объявление появится в этом каталоге на текущем устройстве. Для публикации всем пользователям позже подключим сервер.</p><p class="error hidden" id="formError"></p>
+          <p class="notice">Укажи свою цену: чем дешевле предмет относительно условной цены категории, тем больше демо-покупателей напишут и тем быстрее появятся сообщения. Это симуляция, а не реальные покупатели. Объявление появится в каталоге на этом устройстве.</p><p class="error hidden" id="formError"></p>
           <button type="submit" class="primary-button">Опубликовать объявление</button><button type="button" class="secondary-button" id="cancelCreate">Отмена</button>
         </form>
       </section>
@@ -567,12 +567,19 @@
         { name: "Маша", username: "@masha_market", text: "Здравствуйте! Заинтересовал товар «" + product.name + "». Возможен небольшой торг?" },
         { name: "Денис", username: "@denis_tech", text: "Привет! Подскажи, пожалуйста, товар «" + product.name + "» в наличии?" }
       ];
-      const count = Math.random() < 0.35 ? 2 : 1;
-      for (let i = 0; i < count; i++) {
-        const bot = bots.splice(Math.floor(Math.random() * bots.length), 1)[0];
-        demoChats.unshift({ id: "bot-" + Date.now() + "-" + Math.floor(Math.random() * 1000000), botName: bot.name, botUsername: bot.username, productId: product.id, productName: product.name, messages: [makeBotMessage(bot.text, "bot")] });
-      }
-      saveDemoChats(); renderChatLists();
+      // Чем ниже цена относительно условной цены категории, тем больше демо-покупателей и быстрее они пишут.
+      const priceRub = Math.max(0, Number(product.price) * 100);
+      const referenceRub = product.category === "laptop" ? 40000 : product.category === "tablet" ? 18000 : 25000;
+      const priceRatio = priceRub / referenceRub;
+      const count = priceRatio <= 0.5 ? 3 : priceRatio <= 0.8 ? 2 : 1;
+      const delayMs = priceRatio <= 0.5 ? 700 : priceRatio <= 0.8 ? 2200 : 4500;
+      const shuffledBots = bots.sort(() => Math.random() - 0.5).slice(0, count);
+      shuffledBots.forEach((bot, index) => {
+        window.setTimeout(() => {
+          demoChats.unshift({ id: "bot-" + Date.now() + "-" + Math.floor(Math.random() * 1000000), botName: bot.name, botUsername: bot.username, productId: product.id, productName: product.name, messages: [makeBotMessage(bot.text, "bot")] });
+          saveDemoChats(); renderChatLists();
+        }, delayMs * (index + 1));
+      });
     }
     function renderChatLists() {
       const incoming = getPage("incomingThreads"), outgoing = getPage("outgoingThreads");
