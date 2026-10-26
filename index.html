@@ -418,6 +418,9 @@
     for (let i = products.length - 1; i >= 0; i--) {
       if ([3010, 3011, 3012, 3013].includes(Number(products[i].id))) products.splice(i, 1);
     }
+    if (!products.some(product => Number(product.id) === 3015)) {
+      products.unshift({ id: 3015, name: "Nothing Phone (2) · 256 GB · Dark Gray", price: 350, condition: "Хорошее состояние", description: "Nothing Phone (2) с фирменной световой Glyph-подсветкой и интерактивной 3D-моделью.", image: "📱", photo: null, category: "phone" });
+    }
     if (!products.some(product => Number(product.id) === 3014)) {
       products.unshift({ id: 3014, name: "Apple iPhone 14 Pro · 256 GB · Space Black", price: 480, condition: "Хорошее состояние", description: "iPhone 14 Pro с интерактивной локальной 3D-моделью.", image: "📱", photo: null, category: "phone" });
     }
