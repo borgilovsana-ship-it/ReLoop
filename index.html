@@ -326,7 +326,7 @@
         viewer.setAttribute("loading", "lazy");
         return viewer;
       }
-      if ([3001, 3003, 3004, 3005, 3006, 3007, 3008, 3009, 3014].includes(Number(product.id))) {
+      if ([3001, 3003, 3004, 3005, 3006, 3007, 3008, 3009, 3014, 3015].includes(Number(product.id))) {
         const viewer = document.createElement("model-viewer");
         viewer.className = "product-image product-3d";
         const modelConfig = {
@@ -338,7 +338,8 @@
           3007: { src: "./macbook_pro_14-inch_m5.glb", alt: "3D-модель Apple MacBook Pro 14 дюймов M5" },
           3008: { src: "./samsung_galaxy_s25_ultra.glb", alt: "3D-модель Samsung Galaxy S25 Ultra" },
           3009: { src: "./iphone_15_pro.glb", alt: "3D-модель Apple iPhone 15 Pro" },
-          3014: { src: "./iphone_14_pro.glb", alt: "3D-модель Apple iPhone 14 Pro" }
+          3014: { src: "./iphone_14_pro.glb", alt: "3D-модель Apple iPhone 14 Pro" },
+          3015: { src: "./nothing_phone_2.glb", alt: "3D-модель Nothing Phone (2)" }
         }[Number(product.id)];
         viewer.src = modelConfig.src;
         viewer.alt = modelConfig.alt;
