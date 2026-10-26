@@ -130,7 +130,7 @@
           <label class="form-label" for="listingCategory">Категория</label><select class="form-input" id="listingCategory" disabled><option value="phone">Телефон</option><option value="tablet">Планшет</option><option value="laptop">Ноутбук</option></select>
           <label class="form-label" for="listingDescription">Описание *</label><textarea class="form-input" id="listingDescription" maxlength="1000" placeholder="Состояние, комплектация и другие детали..." required></textarea>
           <label class="form-label" for="listingPrice">Цена в рублях (₽) *</label><input class="form-input" id="listingPrice" type="number" min="0.01" max="1000000000" step="1" placeholder="25000" required>
-          <span class="form-label">Фотография предмета</span><label class="photo-picker" for="listingPhoto"><span id="photoLabel">＋ Выбрать фотографию</span><input id="listingPhoto" type="file" accept="image/*"></label><img id="photoPreview" class="photo-preview" alt="Предпросмотр товара">
+          <img id="photoPreview" class="photo-preview" alt="Предпросмотр товара">
           <p class="notice">Выставляй только предметы из своего инвентаря. Выбери товар, укажи цену и описание. Чем дешевле цена, тем быстрее могут появиться сообщения от демо-покупателей. Это симуляция; объявление сохраняется на этом устройстве.</p><p class="error hidden" id="formError"></p>
           <button type="submit" class="primary-button">Опубликовать объявление</button><button type="button" class="secondary-button" id="cancelCreate">Отмена</button>
         </form>
@@ -297,7 +297,7 @@
       getPage("marketHeading").textContent = category === "all" ? "Все товары" : category === "phone" ? "Телефоны" : category === "tablet" ? "Планшеты" : "Ноутбуки";
       renderProducts(getPage("searchInput").value);
     }
-    let nextId = 3000, selectedProduct = null, pendingPhoto = null, photoDataUrl = null;
+    let nextId = 3000, selectedProduct = null, photoDataUrl = null;
     const pageIds = ["marketPage", "confirmPage", "resultPage", "createPage", "profilePage", "myListingsPage", "favoritesPage", "inventoryPage", "editProfilePage", "otherPage"];
     function getPage(id) { return document.getElementById(id); }
     function showPage(id) {
@@ -497,7 +497,7 @@
     }
     function resetListingForm() {
       getPage("listingForm").reset(); refreshListingInventoryOptions(); getPage("photoPreview").removeAttribute("src"); getPage("photoPreview").style.display = "none";
-      getPage("photoLabel").textContent = "＋ Выбрать фотографию"; getPage("formError").classList.add("hidden"); pendingPhoto = null; photoDataUrl = null;
+      getPage("formError").classList.add("hidden"); photoDataUrl = null;
     }
     getPage("listingInventoryItem").addEventListener("change", () => {
       const item = inventoryItems.find(entry => String(entry.id) === getPage("listingInventoryItem").value && entry.status === "owned");
@@ -506,23 +506,9 @@
       getPage("listingCategory").value = product.category || "phone";
       getPage("listingDescription").value = product.description || product.condition || "";
       getPage("listingPrice").value = String(Math.round(Number(item.purchasedPrice ?? product.price) * 100));
-      photoDataUrl = product.photo || null; pendingPhoto = null;
-      if (photoDataUrl) { getPage("photoPreview").src = photoDataUrl; getPage("photoPreview").style.display = "block"; getPage("photoLabel").textContent = "Используется фото из инвентаря ✓"; }
-      else { getPage("photoPreview").removeAttribute("src"); getPage("photoPreview").style.display = "none"; getPage("photoLabel").textContent = "＋ Выбрать фотографию"; }
-    });
-    getPage("listingPhoto").addEventListener("change", event => {
-      const file = event.target.files && event.target.files[0]; if (!file) return;
-      if (!file.type.startsWith("image/")) {
-        getPage("formError").textContent = "Выбери файл изображения."; getPage("formError").classList.remove("hidden"); event.target.value = ""; return;
-      }
-      if (file.size > 8 * 1024 * 1024) {
-        getPage("formError").textContent = "Фотография слишком большая. Выбери файл до 8 МБ."; getPage("formError").classList.remove("hidden"); event.target.value = ""; return;
-      }
-      pendingPhoto = file; const reader = new FileReader();
-      reader.onload = () => {
-        photoDataUrl = reader.result; getPage("photoPreview").src = photoDataUrl; getPage("photoPreview").style.display = "block"; getPage("photoLabel").textContent = "Фотография выбрана ✓";
-      };
-      reader.readAsDataURL(file); getPage("formError").classList.add("hidden");
+      photoDataUrl = product.photo || null;
+      if (photoDataUrl) { getPage("photoPreview").src = photoDataUrl; getPage("photoPreview").style.display = "block"; }
+      else { getPage("photoPreview").removeAttribute("src"); getPage("photoPreview").style.display = "none"; }
     });
     getPage("listingForm").addEventListener("submit", event => {
       event.preventDefault();
@@ -533,9 +519,6 @@
       }
       if (!name || !description || !Number.isFinite(price) || price <= 0) {
         error.textContent = "Заполни описание и укажи корректную цену."; error.classList.remove("hidden"); return;
-      }
-      if (pendingPhoto && !photoDataUrl) {
-        error.textContent = "Подожди, пока загрузится предпросмотр фотографии."; error.classList.remove("hidden"); return;
       }
       const newProduct = { ...inventoryItem.product, id: nextId++, name, price, condition: "Товар из инвентаря", description, image: category === "laptop" ? "💻" : category === "tablet" ? "📲" : "📱", photo: photoDataUrl || inventoryItem.product.photo || null, category };
       products.unshift(newProduct); userListingIds.push(newProduct.id); inventoryItem.status = "listed"; inventoryItem.listingId = newProduct.id; saveUserListings(); saveInventory();
