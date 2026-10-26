@@ -594,8 +594,15 @@
           const title = document.createElement("strong"); title.textContent = chat.botName + " · " + chat.botUsername;
           const product = document.createElement("p"); product.className = "details"; product.textContent = "По объявлению: " + chat.productName; product.style.margin = "6px 0";
           const last = document.createElement("p"); last.className = "details"; last.textContent = chat.messages.length ? chat.messages[chat.messages.length - 1].text : "";
-          const open = document.createElement("button"); open.type = "button"; open.className = "primary-button"; open.textContent = "Открыть чат"; open.style.marginTop = "8px"; open.addEventListener("click", () => openDemoChat(chat.id));
-          card.append(title, product, last, open); container.appendChild(card);
+          const actions = document.createElement("div"); actions.style.cssText = "display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:8px;margin-top:8px";
+          const open = document.createElement("button"); open.type = "button"; open.className = "primary-button"; open.textContent = "Открыть чат"; open.addEventListener("click", () => openDemoChat(chat.id));
+          const remove = document.createElement("button"); remove.type = "button"; remove.className = "secondary-button"; remove.style.marginTop = "0"; remove.textContent = "Удалить чат"; remove.addEventListener("click", () => {
+            if (!confirm("Удалить чат с " + chat.botName + "? Переписка будет удалена с этого устройства.")) return;
+            demoChats = demoChats.filter(item => item.id !== chat.id);
+            if (activeChatId === chat.id) { activeChatId = null; getPage("chatConversation").classList.add("hidden"); setChatFolder("incoming"); }
+            saveDemoChats(); renderChatLists();
+          });
+          actions.append(open, remove); card.append(title, product, last, actions); container.appendChild(card);
         });
       });
     }
