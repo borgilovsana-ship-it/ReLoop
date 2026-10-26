@@ -15,7 +15,12 @@
     .app-title { font-size: 27px; font-weight: 800; letter-spacing: -1px; margin-bottom: 18px; }
     .app-title span { color: #888; }
     .search-box { height: 46px; display: flex; align-items: center; gap: 10px; padding: 0 13px; background: #f4f4f4; border: 1px solid #eee; border-radius: 14px; }
+    .search-row { display:grid; grid-template-columns:minmax(0,1fr) auto; gap:8px; align-items:center; }
     .search-box input { width: 100%; min-width: 0; border: 0; outline: 0; background: transparent; font-size: 14px; }
+    .mechanics-button { min-height:46px; padding:0 13px; border:1px solid #171717; border-radius:14px; background:#171717; color:#fff; font-size:13px; font-weight:700; white-space:nowrap; }
+    .category-row { display:flex; gap:8px; overflow-x:auto; padding:12px 0 2px; }
+    .category-button { flex:0 0 auto; border:1px solid #ddd; border-radius:999px; background:#fff; color:#333; padding:9px 13px; font-size:12px; font-weight:700; }
+    .category-button.active { background:#171717; border-color:#171717; color:#fff; }
     .page { padding: 8px 12px 24px; }
     .page h2 { font-size: 21px; margin: 6px 4px 16px; }
     .product-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
@@ -103,10 +108,10 @@
   <div class="app" id="mainApp">
     <header class="market-header" id="marketHeader">
       <div class="app-title">Re<span>Loop</span></div>
-      <label class="search-box"><span>⌕</span><input id="searchInput" type="search" placeholder="Искать товары..." aria-label="Поиск товаров"></label>
+      <div class="search-row"><label class="search-box"><span>⌕</span><input id="searchInput" type="search" placeholder="Искать товары..." aria-label="Поиск товаров"></label><button type="button" class="mechanics-button" id="mechanicsButton">Механика</button></div><div class="category-row hidden" id="categoryRow" aria-label="Категории товаров"><button type="button" class="category-button active" data-category="all">Все</button><button type="button" class="category-button" data-category="phone">Телефоны</button><button type="button" class="category-button" data-category="tablet">Планшеты</button><button type="button" class="category-button" data-category="laptop">Ноутбуки</button></div>
     </header>
     <main>
-      <section class="page" id="marketPage"><h2>Популярные товары</h2><div class="product-grid" id="productGrid"></div></section>
+      <section class="page" id="marketPage"><h2 id="marketHeading">Популярные товары</h2><div class="product-grid" id="productGrid"></div></section>
       <section class="page hidden" id="confirmPage">
         <button class="back-button" id="backButton">← Назад к товарам</button><h2>Подтверждение покупки</h2>
         <article class="product-card">
@@ -121,6 +126,7 @@
         <button class="back-button" id="cancelCreateTop">← Назад</button><h2>Новое объявление</h2>
         <form id="listingForm" class="form-card">
           <label class="form-label" for="listingName">Название предмета *</label><input class="form-input" id="listingName" maxlength="80" placeholder="Например, iPhone 13" required>
+          <label class="form-label" for="listingCategory">Категория *</label><select class="form-input" id="listingCategory" required><option value="phone">Телефон</option><option value="tablet">Планшет</option><option value="laptop">Ноутбук</option></select>
           <label class="form-label" for="listingDescription">Описание *</label><textarea class="form-input" id="listingDescription" maxlength="1000" placeholder="Состояние, комплектация и другие детали..." required></textarea>
           <label class="form-label" for="listingPrice">Цена в рублях (₽) *</label><input class="form-input" id="listingPrice" type="number" min="0.01" max="1000000000" step="1" placeholder="25000" required>
           <span class="form-label">Фотография предмета</span><label class="photo-picker" for="listingPhoto"><span id="photoLabel">＋ Выбрать фотографию</span><input id="listingPhoto" type="file" accept="image/*"></label><img id="photoPreview" class="photo-preview" alt="Предпросмотр товара">
@@ -272,7 +278,29 @@
       { id: 1079, name: "Vivo V29 · 256 GB", price: 260, condition: "Хорошее состояние", description: "Телефон б/у. Уточни у продавца состояние батареи, комплект и возможность проверки перед покупкой.", image: "📱", photo: null },
       { id: 1080, name: "Asus Zenfone 10 · 128 GB", price: 420, condition: "Хорошее состояние", description: "Телефон б/у. Уточни у продавца состояние батареи, комплект и возможность проверки перед покупкой.", image: "📱", photo: null }
     );
-    let nextId = 7, selectedProduct = null, pendingPhoto = null, photoDataUrl = null;
+    products.push(
+      { id: 2001, name: "Apple iPad Air · 256 GB", price: 520, condition: "Хорошее состояние", description: "Планшет б/у. Уточни у продавца состояние экрана и комплект.", image: "📱", photo: null, category: "tablet" },
+      { id: 2002, name: "Apple iPad 10-го поколения · 64 GB", price: 330, condition: "Отличное состояние", description: "Планшет б/у. Уточни у продавца состояние экрана и комплект.", image: "📱", photo: null, category: "tablet" },
+      { id: 2003, name: "Samsung Galaxy Tab S9 · 128 GB", price: 470, condition: "Хорошее состояние", description: "Планшет б/у. Уточни у продавца состояние экрана и комплект.", image: "📱", photo: null, category: "tablet" },
+      { id: 2004, name: "Xiaomi Pad 6 · 128 GB", price: 260, condition: "Отличное состояние", description: "Планшет б/у. Уточни у продавца состояние экрана и комплект.", image: "📱", photo: null, category: "tablet" },
+      { id: 2005, name: "Apple MacBook Air M2 · 256 GB", price: 890, condition: "Хорошее состояние", description: "Ноутбук б/у. Уточни у продавца состояние батареи и комплект.", image: "💻", photo: null, category: "laptop" },
+      { id: 2006, name: "Apple MacBook Pro 14 · M1 Pro", price: 1150, condition: "Хорошее состояние", description: "Ноутбук б/у. Уточни у продавца состояние батареи и комплект.", image: "💻", photo: null, category: "laptop" },
+      { id: 2007, name: "ASUS Zenbook 14 OLED", price: 680, condition: "Отличное состояние", description: "Ноутбук б/у. Уточни у продавца состояние батареи и комплект.", image: "💻", photo: null, category: "laptop" },
+      { id: 2008, name: "Lenovo ThinkPad T14", price: 420, condition: "Хорошее состояние", description: "Ноутбук б/у. Уточни у продавца состояние батареи и комплект.", image: "💻", photo: null, category: "laptop" }
+    );
+    let activeCategory = "all";
+    function getProductCategory(product) {
+      if (product.category) return product.category;
+      return /iphone|galaxy|pixel|xiaomi|oneplus|nothing phone|xperia|motorola|huawei|honor|oppo|vivo|zenfone/i.test(product.name) ? "phone" : "other";
+    }
+    function setProductCategory(category) {
+      activeCategory = category;
+      getPage("categoryRow").classList.remove("hidden");
+      document.querySelectorAll("[data-category]").forEach(button => button.classList.toggle("active", button.dataset.category === category));
+      getPage("marketHeading").textContent = category === "all" ? "Все товары" : category === "phone" ? "Телефоны" : category === "tablet" ? "Планшеты" : "Ноутбуки";
+      renderProducts(getPage("searchInput").value);
+    }
+    let nextId = 3000, selectedProduct = null, pendingPhoto = null, photoDataUrl = null;
     const pageIds = ["marketPage", "confirmPage", "resultPage", "createPage", "profilePage", "myListingsPage", "favoritesPage", "editProfilePage", "otherPage"];
     function getPage(id) { return document.getElementById(id); }
     function showPage(id) {
@@ -400,7 +428,7 @@
     }
     function renderProducts(query = "") {
       const grid = getPage("productGrid"), normalizedQuery = query.trim().toLowerCase();
-      const filtered = products.filter(product => (product.name + " " + product.description).toLowerCase().includes(normalizedQuery));
+      const filtered = products.filter(product => (activeCategory === "all" || getProductCategory(product) === activeCategory) && (product.name + " " + product.description).toLowerCase().includes(normalizedQuery));
       grid.replaceChildren();
       if (!filtered.length) {
         const empty = document.createElement("p"); empty.className = "empty-state"; empty.textContent = "Товары не найдены"; grid.appendChild(empty); return;
@@ -431,6 +459,12 @@
       showPage("confirmPage");
     }
     getPage("searchInput").addEventListener("input", event => renderProducts(event.target.value));
+    getPage("mechanicsButton").addEventListener("click", () => {
+      const row = getPage("categoryRow");
+      if (row.classList.contains("hidden")) setProductCategory("all");
+      else { row.classList.add("hidden"); activeCategory = "all"; getPage("marketHeading").textContent = "Популярные товары"; renderProducts(getPage("searchInput").value); }
+    });
+    document.querySelectorAll("[data-category]").forEach(button => button.addEventListener("click", () => setProductCategory(button.dataset.category)));
     getPage("backButton").addEventListener("click", () => showPage("marketPage"));
     getPage("cancelButton").addEventListener("click", () => showPage("marketPage"));
     getPage("confirmButton").addEventListener("click", () => {
@@ -470,14 +504,14 @@
     });
     getPage("listingForm").addEventListener("submit", event => {
       event.preventDefault();
-      const name = getPage("listingName").value.trim(), description = getPage("listingDescription").value.trim(), enteredPriceRub = Number(getPage("listingPrice").value), price = enteredPriceRub / 100, error = getPage("formError");
+      const name = getPage("listingName").value.trim(), category = getPage("listingCategory").value, description = getPage("listingDescription").value.trim(), enteredPriceRub = Number(getPage("listingPrice").value), price = enteredPriceRub / 100, error = getPage("formError");
       if (!name || !description || !Number.isFinite(price) || price <= 0) {
         error.textContent = "Заполни название, описание и корректную цену."; error.classList.remove("hidden"); return;
       }
       if (pendingPhoto && !photoDataUrl) {
         error.textContent = "Подожди, пока загрузится предпросмотр фотографии."; error.classList.remove("hidden"); return;
       }
-      const newProduct = { id: nextId++, name, price, condition: "Объявление пользователя", description, image: "📦", photo: photoDataUrl };
+      const newProduct = { id: nextId++, name, price, condition: "Объявление пользователя", description, image: category === "laptop" ? "💻" : "📱", photo: photoDataUrl, category };
       products.unshift(newProduct); userListingIds.push(newProduct.id); saveUserListings();
       resetListingForm(); getPage("searchInput").value = ""; renderProducts(); setActiveNav("market"); showPage("marketPage");
       alert("Объявление добавлено в каталог на этом устройстве!");
@@ -495,6 +529,7 @@
         setActiveNav(page);
         if (page === "market") {
           getPage("searchInput").value = "";
+          activeCategory = "all"; getPage("categoryRow").classList.add("hidden"); getPage("marketHeading").textContent = "Популярные товары";
           renderProducts();
           showPage("marketPage");
         } else if (page === "create") {
