@@ -28,6 +28,19 @@
     .product-card { min-width: 0; padding: 9px; border: 1px solid #ededed; border-radius: 16px; overflow: hidden; background: #fff; }
     .product-image { width: 100%; aspect-ratio: 1 / 1; border-radius: 11px; background: #f5f5f5; display: flex; align-items: center; justify-content: center; font-size: clamp(42px, 12vw, 68px); object-fit: contain; margin-bottom: 10px; }
     img.product-image { display: block; }
+    .phone-art { position: relative; perspective: 700px; overflow: hidden; background: radial-gradient(ellipse at 50% 42%, #fff 0%, #f1f2f5 68%, #e8e9ed 100%); }
+    .phone-device { position: relative; width: 39%; height: 78%; border-radius: 18% / 9%; padding: 4px; background: linear-gradient(115deg, #555b65, #15171b 28%, #7b818b 52%, #22252b 76%, #555b65); box-shadow: 7px 10px 13px #0003, inset 1px 0 1px #ffffffaa; transform: rotate(-9deg) rotateY(-16deg); }
+    .phone-glass { position: relative; width: 100%; height: 100%; overflow: hidden; border-radius: 16% / 8%; background: #10141e; border: 1px solid #08090c; }
+    .phone-glass::before { content: ""; position: absolute; inset: 0; background: radial-gradient(ellipse at 28% 25%, #ffb4cf 0%, transparent 32%), radial-gradient(ellipse at 78% 34%, #8b7cff 0%, transparent 35%), radial-gradient(ellipse at 50% 80%, #20c7c9 0%, transparent 45%), linear-gradient(145deg, #101c38, #25204e 45%, #070a14); }
+    .phone-glass::after { content: ""; position: absolute; top: 4%; left: 35%; width: 30%; height: 3%; border-radius: 99px; background: #050608; box-shadow: 0 0 0 1px #343640; }
+    .phone-side { position: absolute; right: -3px; top: 23%; width: 3px; height: 22%; border-radius: 0 3px 3px 0; background: #b9bdc5; }
+    .phone-camera-dot { position: absolute; z-index: 2; top: 7%; left: 8%; width: 21%; aspect-ratio: 1; border-radius: 50%; background: radial-gradient(circle at 35% 30%, #6e8498 0 10%, #141a24 28%, #020305 68%); border: 2px solid #737984; box-shadow: 0 0 0 1px #171a20; }
+    .phone-camera-dot.two { top: 7%; left: 35%; }
+    .phone-camera-dot.three { top: 32%; left: 8%; }
+    .phone-camera-flash { position: absolute; z-index: 2; top: 35%; left: 39%; width: 9%; aspect-ratio: 1; border-radius: 50%; background: #e9e5ce; box-shadow: 0 0 3px #fff; }
+    .phone-back { position: absolute; inset: 0; border-radius: inherit; background: linear-gradient(120deg, #c9ced5, #737b88 45%, #30343c); border: 1px solid #e2e5ea; }
+    .phone-camera-plate { position: absolute; z-index: 1; top: 5%; left: 5%; width: 43%; height: 39%; border-radius: 18%; background: linear-gradient(135deg, #c6cbd2, #555c67); border: 1px solid #8d949e; box-shadow: 1px 2px 3px #0005; }
+
     .product-name { font-size: 14px; line-height: 1.35; font-weight: 700; min-height: 36px; overflow-wrap: anywhere; }
     .product-condition { color: #888; font-size: 11px; margin: 5px 0 8px; }
     .product-price { font-size: 20px; font-weight: 800; margin-bottom: 10px; }
@@ -401,6 +414,18 @@
         const image = document.createElement("img");
         image.className = "product-image"; image.src = product.photo; image.alt = product.name;
         return image;
+      }
+      if (getProductCategory(product) === "phone") {
+        const scene = document.createElement("div");
+        scene.className = "product-image phone-art"; scene.setAttribute("role", "img"); scene.setAttribute("aria-label", "3D-иллюстрация телефона: " + product.name);
+        const device = document.createElement("div"); device.className = "phone-device";
+        const back = document.createElement("div"); back.className = "phone-back";
+        const plate = document.createElement("div"); plate.className = "phone-camera-plate";
+        ["phone-camera-dot", "phone-camera-dot two", "phone-camera-dot three"].forEach(className => { const lens = document.createElement("span"); lens.className = className; plate.appendChild(lens); });
+        const flash = document.createElement("span"); flash.className = "phone-camera-flash"; plate.appendChild(flash); back.appendChild(plate);
+        const glass = document.createElement("div"); glass.className = "phone-glass";
+        const side = document.createElement("span"); side.className = "phone-side";
+        device.append(back, glass, side); scene.appendChild(device); return scene;
       }
       const image = document.createElement("div");
       image.className = "product-image"; image.textContent = product.image || "📦";
