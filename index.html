@@ -341,6 +341,12 @@
       { id: 2007, name: "ASUS Zenbook 14 OLED", price: 680, condition: "Отличное состояние", description: "Ноутбук б/у. Уточни у продавца состояние батареи и комплект.", image: "💻", photo: null, category: "laptop" },
       { id: 2008, name: "Lenovo ThinkPad T14", price: 420, condition: "Хорошее состояние", description: "Ноутбук б/у. Уточни у продавца состояние батареи и комплект.", image: "💻", photo: null, category: "laptop" }
     );
+    // В каталоге оставляем только телефоны Apple iPhone; планшеты и ноутбуки не меняем.
+    for (let i = products.length - 1; i >= 0; i--) {
+      const product = products[i];
+      const isPhone = !product.category && /iphone|galaxy|pixel|xiaomi|oneplus|nothing phone|xperia|motorola|huawei|honor|oppo|vivo|zenfone/i.test(product.name);
+      if (isPhone && !/iphone/i.test(product.name)) products.splice(i, 1);
+    }
     let activeCategory = "all";
     function getProductCategory(product) {
       if (product.category) return product.category;
