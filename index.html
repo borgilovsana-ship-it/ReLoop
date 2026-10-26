@@ -15,7 +15,10 @@
     .app-title { font-size: 27px; font-weight: 800; letter-spacing: -1px; margin-bottom: 18px; }
     .app-title span { color: #888; }
     .search-box { height: 46px; display: flex; align-items: center; gap: 10px; padding: 0 13px; background: #f4f4f4; border: 1px solid #eee; border-radius: 14px; }
-    .search-row { display:flex; flex-direction:column; align-items:stretch; gap:8px; }
+    .search-row { display:flex; align-items:center; gap:8px; }
+    .search-row .search-box { flex:1; min-width:0; }
+    .mechanics-toggle { flex:0 0 auto; height:46px; padding:0 13px; border:1px solid #ddd; border-radius:14px; background:#fff; color:#171717; font-size:12px; font-weight:700; white-space:nowrap; }
+    .mechanics-toggle.active { background:#171717; color:#fff; border-color:#171717; }
     .search-box input { width: 100%; min-width: 0; border: 0; outline: 0; background: transparent; font-size: 14px; }
     .category-row { display:flex; gap:8px; overflow-x:auto; padding:12px 0 2px; }
     .category-button { flex:0 0 auto; border:1px solid #ddd; border-radius:999px; background:#fff; color:#333; padding:9px 13px; font-size:12px; font-weight:700; }
@@ -109,7 +112,7 @@
   <div class="app" id="mainApp">
     <header class="market-header" id="marketHeader">
       <div class="app-title">Re<span>Loop</span></div>
-      <div class="search-row"><label class="search-box"><span>⌕</span><input id="searchInput" type="search" placeholder="Искать товары..." aria-label="Поиск товаров"></label></div><div class="category-row" id="categoryRow" aria-label="Категории товаров"><button type="button" class="category-button active" data-category="all">Все</button><button type="button" class="category-button" data-category="phone">Телефоны</button><button type="button" class="category-button" data-category="tablet">Планшеты</button><button type="button" class="category-button" data-category="laptop">Ноутбуки</button><button type="button" class="category-button mechanics" data-category="mechanics">⚙ Механика</button></div>
+      <div class="search-row"><label class="search-box"><span>⌕</span><input id="searchInput" type="search" placeholder="Искать товары..." aria-label="Поиск товаров"></label><button type="button" class="mechanics-toggle" id="mechanicsToggle" aria-expanded="false">⚙ Механика</button></div><div class="category-row hidden" id="categoryRow" aria-label="Категории механики"><button type="button" class="category-button" data-category="phone">Телефоны</button><button type="button" class="category-button" data-category="laptop">Ноутбуки</button><button type="button" class="category-button" data-category="tablet">Планшеты</button></div>
     </header>
     <main>
       <section class="page" id="marketPage"><h2 id="marketHeading">Популярные товары</h2><div class="product-grid" id="productGrid"></div></section>
@@ -210,8 +213,10 @@
     function setProductCategory(category) {
       activeCategory = category;
       getPage("categoryRow").classList.remove("hidden");
+      getPage("mechanicsToggle").classList.add("active");
+      getPage("mechanicsToggle").setAttribute("aria-expanded", "true");
       document.querySelectorAll("[data-category]").forEach(button => button.classList.toggle("active", button.dataset.category === category));
-      getPage("marketHeading").textContent = category === "all" ? "Все товары" : category === "phone" ? "Телефоны" : category === "tablet" ? "Планшеты" : category === "laptop" ? "Ноутбуки" : "Механика";
+      getPage("marketHeading").textContent = category === "all" ? "Все товары" : category === "phone" ? "Телефоны" : category === "tablet" ? "Планшеты" : "Ноутбуки";
       renderProducts(getPage("searchInput").value);
     }
     let nextId = 3000, selectedProduct = null, photoDataUrl = null;
@@ -472,6 +477,15 @@
       showPage("confirmPage");
     }
     getPage("searchInput").addEventListener("input", event => renderProducts(event.target.value));
+    getPage("mechanicsToggle").addEventListener("click", () => {
+      const row = getPage("categoryRow");
+      const opening = row.classList.contains("hidden");
+      row.classList.toggle("hidden", !opening);
+      getPage("mechanicsToggle").classList.toggle("active", opening);
+      getPage("mechanicsToggle").setAttribute("aria-expanded", String(opening));
+      if (opening) getPage("marketHeading").textContent = "Механика";
+      else { activeCategory = "all"; getPage("marketHeading").textContent = "Популярные товары"; renderProducts(getPage("searchInput").value); }
+    });
     document.querySelectorAll("[data-category]").forEach(button => button.addEventListener("click", () => setProductCategory(button.dataset.category)));
     getPage("backButton").addEventListener("click", () => showPage("marketPage"));
     getPage("cancelButton").addEventListener("click", () => showPage("marketPage"));
@@ -548,7 +562,7 @@
         setActiveNav(page);
         if (page === "market") {
           getPage("searchInput").value = "";
-          activeCategory = "all"; getPage("categoryRow").classList.add("hidden"); getPage("marketHeading").textContent = "Популярные товары";
+          activeCategory = "all"; getPage("categoryRow").classList.add("hidden"); getPage("mechanicsToggle").classList.remove("active"); getPage("mechanicsToggle").setAttribute("aria-expanded", "false"); getPage("marketHeading").textContent = "Популярные товары";
           renderProducts();
           showPage("marketPage");
         } else if (page === "create") {
