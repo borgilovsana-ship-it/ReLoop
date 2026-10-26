@@ -94,21 +94,14 @@
     <div class="welcome-card">
       <div class="welcome-logo">Re<span>Loop</span></div>
       <h1>Добро пожаловать в ReLoop</h1>
-      <p class="welcome-subtitle">Создай свой профиль, чтобы начать пользоваться маркетплейсом.</p>
+      <p class="welcome-subtitle">Создай локальный профиль и начинай пользоваться маркетплейсом.</p>
       <form id="welcomeForm">
-        <label class="form-label" for="welcomeEmail">Email *</label>
-        <input class="form-input" id="welcomeEmail" type="email" autocomplete="email" placeholder="you@example.com" required>
-        <label class="form-label" for="welcomePassword">Пароль *</label>
-        <input class="form-input" id="welcomePassword" type="password" minlength="8" autocomplete="new-password" placeholder="Минимум 8 символов" required>
-        <div id="signupFields">
-          <label class="form-label" for="welcomeUsername">Юзернейм *</label>
-          <input class="form-input" id="welcomeUsername" maxlength="25" placeholder="@king" autocomplete="username" required>
-          <label class="form-label" for="welcomeName">Твоё имя *</label>
-          <input class="form-input" id="welcomeName" maxlength="40" placeholder="Например, Алекс" autocomplete="name" required>
-        </div>
+        <label class="form-label" for="welcomeUsername">Юзернейм *</label>
+        <input class="form-input" id="welcomeUsername" maxlength="25" placeholder="@king" autocomplete="username" required>
+        <label class="form-label" for="welcomeName">Твоё имя *</label>
+        <input class="form-input" id="welcomeName" maxlength="40" placeholder="Например, Алекс" autocomplete="name" required>
         <p class="welcome-error hidden" id="welcomeError" role="alert"></p>
-        <button class="primary-button" id="welcomeSubmit" type="submit">Создать аккаунт</button>
-        <button class="secondary-button" id="authModeToggle" type="button">Уже есть аккаунт? Войти</button>
+        <button class="primary-button" id="welcomeSubmit" type="submit">Начать пользоваться ReLoop</button>
       </form>
     </div>
   </section>
@@ -198,7 +191,7 @@
     </nav>
   </div>
   <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.57.0/dist/umd/supabase.min.js" crossorigin="anonymous"></script>
+  
   <script>
     const products = [];
     
@@ -750,98 +743,35 @@
       getPage("otherDescription").textContent = "Имя: " + profile.name + "\nЮзернейм: " + profile.username;
     }
 
-    const SUPABASE_URL = "https://oqmbkncafyglxussjcwk.supabase.co";
-    const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_f9SHOKGwU7krOA04HrEn4A_NtGVVGUV";
-    const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
-    let authMode = "signup";
-    getPage("authModeToggle").addEventListener("click", () => {
-      authMode = authMode === "signup" ? "login" : "signup";
-      const signup = authMode === "signup";
-      getPage("signupFields").classList.toggle("hidden", !signup);
-      getPage("welcomeUsername").required = signup;
-      getPage("welcomeName").required = signup;
-      getPage("welcomePassword").autocomplete = signup ? "new-password" : "current-password";
-      getPage("welcomeSubmit").textContent = signup ? "Создать аккаунт" : "Войти";
-      getPage("authModeToggle").textContent = signup ? "Уже есть аккаунт? Войти" : "Нет аккаунта? Зарегистрироваться";
-      getPage("welcomeError").classList.add("hidden");
-    });
-    async function syncAuthenticatedProfile(user, nameInput, usernameInput) {
-      const metadata = user.user_metadata || {};
-      let name = (nameInput || metadata.display_name || metadata.name || "").trim();
-      let username = (usernameInput || metadata.username || "").trim().replace(/^@+/, "");
-      if (!username) username = "user_" + user.id.replace(/-/g, "").slice(0, 12);
-      if (!name) name = username;
-      const profile = { id: user.id, username: "@" + username, name, email: user.email };
-      const { error } = await supabaseClient.from("profiles").upsert({
-        id: user.id, username: profile.username, display_name: profile.name
-      }, { onConflict: "id" });
-      if (error) throw error;
-      localStorage.setItem("reloop-profile", JSON.stringify(profile));
-      applyProfile(profile);
-    }
-    getPage("welcomeForm").addEventListener("submit", async event => {
+    // Локальный режим: вход и регистрация отключены.
+    // Профиль хранится только на этом устройстве в localStorage.
+    getPage("welcomeForm").addEventListener("submit", event => {
       event.preventDefault();
-      const email = getPage("welcomeEmail").value.trim();
-      const password = getPage("welcomePassword").value;
       const name = getPage("welcomeName").value.trim();
-      let username = getPage("welcomeUsername").value.trim().replace(/^@+/, "");
+      const rawUsername = getPage("welcomeUsername").value.trim().replace(/^@+/, "");
       const error = getPage("welcomeError");
-      const submit = getPage("welcomeSubmit");
-      error.classList.add("hidden");
-      if (password.length < 8) { error.textContent = "Пароль должен содержать минимум 8 символов."; error.classList.remove("hidden"); return; }
-      if (authMode === "signup" && (!/^[a-zA-Z0-9_]{3,24}$/.test(username) || !name)) {
-        error.textContent = "Укажи имя и юзернейм: 3–24 латинских символа, цифры или _.";
-        error.classList.remove("hidden"); return;
-      }
-      submit.disabled = true; submit.textContent = "Подожди...";
-      try {
-        if (authMode === "signup") {
-          const { data, error: authError } = await supabaseClient.auth.signUp({
-            email, password, options: { data: { display_name: name, username: "@" + username },
-              emailRedirectTo: window.location.origin + window.location.pathname }
-          });
-          if (authError) throw authError;
-          if (!data.session) {
-            error.textContent = "Аккаунт создан! Проверь почту и подтверди email, затем вернись сюда и войди.";
-            error.classList.remove("hidden");
-            return;
-          }
-          await syncAuthenticatedProfile(data.user, name, "@" + username);
-        } else {
-          const { data, error: authError } = await supabaseClient.auth.signInWithPassword({ email, password });
-          if (authError) throw authError;
-          await syncAuthenticatedProfile(data.user, "", "");
-        }
-      } catch (err) {
-        error.textContent = err && err.message ? err.message : "Не удалось выполнить вход. Попробуй ещё раз.";
+      if (!name || !/^[a-zA-Z0-9_]{3,24}$/.test(rawUsername)) {
+        error.textContent = "Введи имя и юзернейм длиной 3–24 символа (латинские буквы, цифры или _).";
         error.classList.remove("hidden");
-      } finally {
-        submit.disabled = false;
-        submit.textContent = authMode === "signup" ? "Создать аккаунт" : "Войти";
+        return;
       }
+      const profile = { username: "@" + rawUsername, name };
+      try {
+        localStorage.setItem("reloop-profile", JSON.stringify(profile));
+      } catch (_) {
+        error.textContent = "Не удалось сохранить профиль на этом устройстве.";
+        error.classList.remove("hidden");
+        return;
+      }
+      applyProfile(profile);
     });
 
-    getPage("mainApp").classList.add("hidden");
-    getPage("welcomeScreen").classList.remove("hidden");
-    supabaseClient.auth.getSession().then(async ({ data, error }) => {
-      if (error) console.warn("Не удалось восстановить сессию Supabase:", error.message);
-      if (data && data.session && data.session.user) {
-        try {
-          await syncAuthenticatedProfile(data.session.user, "", "");
-        } catch (profileError) {
-          const authError = getPage("welcomeError");
-          authError.textContent = "Вход выполнен, но профиль не загрузился: " + profileError.message;
-          authError.classList.remove("hidden");
-        }
-      }
-    });
-    supabaseClient.auth.onAuthStateChange((event, session) => {
-      if (event === "SIGNED_OUT") {
-        localStorage.removeItem("reloop-profile");
-        getPage("mainApp").classList.add("hidden");
-        getPage("welcomeScreen").classList.remove("hidden");
-      }
-    });
+    if (savedProfile && savedProfile.name && savedProfile.username) {
+      applyProfile(savedProfile);
+    } else {
+      getPage("mainApp").classList.add("hidden");
+      getPage("welcomeScreen").classList.remove("hidden");
+    }
 
     renderProducts();
   </script>
