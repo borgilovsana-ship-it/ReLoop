@@ -29,8 +29,8 @@
     .product-image { width: 100%; aspect-ratio: 1 / 1; border-radius: 11px; background: #f5f5f5; display: flex; align-items: center; justify-content: center; font-size: clamp(42px, 12vw, 68px); object-fit: contain; margin-bottom: 10px; }
     img.product-image { display: block; }
     .phone-art { position: relative; perspective: 700px; overflow: hidden; background: radial-gradient(ellipse at 50% 42%, #fff 0%, #f1f2f5 68%, #e8e9ed 100%); }
-    .phone-device { position: relative; display: flex; align-items: stretch; justify-content: center; gap: 5px; width: 66%; height: 76%; padding: 0; background: transparent; box-shadow: none; transform: rotate(-7deg) rotateY(-10deg); }
-    .phone-glass { position: relative; flex: 1 1 0; min-width: 0; width: auto; height: 100%; overflow: hidden; border-radius: 14% / 7%; background: #10141e; border: 2px solid #343943; box-shadow: 4px 7px 9px #0003, inset 1px 0 1px #ffffffaa; }
+    .phone-device { position: relative; display: flex; align-items: stretch; justify-content: center; gap: 0; width: 34%; height: 76%; padding: 0; background: transparent; box-shadow: none; transform: rotate(-7deg) rotateY(-10deg); }
+    .phone-glass { display: none; }
     .phone-glass::before { content: ""; position: absolute; inset: 0; background: radial-gradient(ellipse at 28% 25%, #ffb4cf 0%, transparent 32%), radial-gradient(ellipse at 78% 34%, #8b7cff 0%, transparent 35%), radial-gradient(ellipse at 50% 80%, #20c7c9 0%, transparent 45%), linear-gradient(145deg, #101c38, #25204e 45%, #070a14); }
     .phone-glass::after { content: ""; position: absolute; top: 4%; left: 35%; width: 30%; height: 3%; border-radius: 99px; background: #050608; box-shadow: 0 0 0 1px #343640; }
     .phone-side { display: none; }
