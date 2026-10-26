@@ -5,6 +5,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#ffffff">
   <title>ReLoop</title>
+  <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
+  <style>
+    model-viewer.product-image { width:100%; height:auto; aspect-ratio:1/1; background:radial-gradient(ellipse at 50% 45%,#fff 0%,#f1f2f5 70%,#e8e9ed 100%); }
+  </style>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body { font-family: Arial, sans-serif; color: #171717; background: #fff; }
@@ -459,6 +463,19 @@
       alert("Баланс пополнен на " + formatRub(amount) + "!");
     });
     function makeProductImage(product) {
+      if (Number(product.id) === 1001) {
+        const viewer = document.createElement("model-viewer");
+        viewer.className = "product-image";
+        viewer.setAttribute("src", "./iphone_15_pro_max.glb");
+        viewer.setAttribute("alt", product.name + " — интерактивная 3D-модель");
+        viewer.setAttribute("camera-controls", "");
+        viewer.setAttribute("auto-rotate", "");
+        viewer.setAttribute("touch-action", "pan-y");
+        viewer.setAttribute("loading", "eager");
+        viewer.setAttribute("shadow-intensity", "1");
+        viewer.setAttribute("exposure", "1");
+        return viewer;
+      }
       if (product.photo) {
         const image = document.createElement("img");
         image.className = "product-image"; image.src = product.photo; image.alt = product.name;
