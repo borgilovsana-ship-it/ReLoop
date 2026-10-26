@@ -158,15 +158,10 @@
             <button type="button" class="primary-button" id="incomingChatsButton">Входящие</button>
             <button type="button" class="secondary-button" id="outgoingChatsButton">Исходящие</button>
           </div>
-          <div id="incomingChatsList" class="form-card">
-            <h3 style="font-size:16px;margin-bottom:8px">Входящие сообщения</h3>
-            <p class="details" style="margin-bottom:0">Здесь будут сообщения от покупателей и продавцов. Пока новых сообщений нет.</p>
-          </div>
-          <div id="outgoingChatsList" class="form-card hidden">
-            <h3 style="font-size:16px;margin-bottom:8px">Исходящие сообщения</h3>
-            <p class="details" style="margin-bottom:0">Здесь будут сообщения, которые ты отправил другим пользователям. Пока отправленных сообщений нет.</p>
-          </div>
-          <p class="notice">Переписка между пользователями пока не подключена — это разделы для входящих и исходящих чатов.</p>
+          <div id="incomingChatsList" class="form-card"><h3 style="font-size:16px;margin-bottom:8px">Входящие сообщения</h3><div id="incomingThreads"></div></div>
+          <div id="outgoingChatsList" class="form-card hidden"><h3 style="font-size:16px;margin-bottom:8px">Исходящие сообщения</h3><div id="outgoingThreads"></div></div>
+          <div id="chatConversation" class="form-card hidden" style="margin-top:12px"><button type="button" class="back-button" id="backToChats">← К списку чатов</button><h3 id="chatConversationTitle" style="font-size:17px;margin:8px 0"></h3><p class="notice">Демо-чат: собеседники здесь — боты ReLoop, не реальные пользователи.</p><div id="chatMessages" style="display:grid;gap:10px;margin:14px 0"></div><form id="chatReplyForm" style="display:grid;gap:8px"><label class="form-label" for="chatReplyInput">Сообщение</label><input class="form-input" id="chatReplyInput" maxlength="500" placeholder="Напиши сообщение..." required><button class="primary-button" type="submit">Отправить</button></form></div>
+          <p class="notice">Сейчас сообщения отправляются демонстрационным ботам. Реальные пользователи смогут писать после подключения сервера.</p>
         </div>
         <div id="moreFinance" class="hidden">
           <div class="profile-stats" style="grid-template-columns:1fr;gap:10px;margin-top:0">
@@ -519,6 +514,7 @@
       }
       const newProduct = { id: nextId++, name, price, condition: "Объявление пользователя", description, image: category === "laptop" ? "💻" : "📱", photo: photoDataUrl, category };
       products.unshift(newProduct); userListingIds.push(newProduct.id); saveUserListings();
+      createBotChatsForListing(newProduct);
       resetListingForm(); getPage("searchInput").value = ""; renderProducts(); setActiveNav("market"); showPage("marketPage");
       alert("Объявление добавлено в каталог на этом устройстве!");
     });
@@ -561,15 +557,79 @@
       });
     });
 
+    let demoChats = (() => { try { const value = JSON.parse(localStorage.getItem("reloop-demo-chats") || "[]"); return Array.isArray(value) ? value : []; } catch (_) { return []; } })();
+    let activeChatId = null;
+    function saveDemoChats() { try { localStorage.setItem("reloop-demo-chats", JSON.stringify(demoChats)); } catch (_) { alert("Не удалось сохранить чаты на этом устройстве."); } }
+    function makeBotMessage(text, from) { return { text, from, time: new Date().toISOString() }; }
+    function createBotChatsForListing(product) {
+      const bots = [
+        { name: "Алекс", username: "@alex_buyer", text: "Привет! «" + product.name + "» ещё продаётся? Можно узнать подробнее о состоянии?" },
+        { name: "Маша", username: "@masha_market", text: "Здравствуйте! Заинтересовал товар «" + product.name + "». Возможен небольшой торг?" },
+        { name: "Денис", username: "@denis_tech", text: "Привет! Подскажи, пожалуйста, товар «" + product.name + "» в наличии?" }
+      ];
+      const count = Math.random() < 0.35 ? 2 : 1;
+      for (let i = 0; i < count; i++) {
+        const bot = bots.splice(Math.floor(Math.random() * bots.length), 1)[0];
+        demoChats.unshift({ id: "bot-" + Date.now() + "-" + Math.floor(Math.random() * 1000000), botName: bot.name, botUsername: bot.username, productId: product.id, productName: product.name, messages: [makeBotMessage(bot.text, "bot")] });
+      }
+      saveDemoChats(); renderChatLists();
+    }
+    function renderChatLists() {
+      const incoming = getPage("incomingThreads"), outgoing = getPage("outgoingThreads");
+      if (!incoming || !outgoing) return;
+      incoming.replaceChildren(); outgoing.replaceChildren();
+      const incomingChats = demoChats.filter(chat => !chat.messages.length || chat.messages[chat.messages.length - 1].from === "bot");
+      const outgoingChats = demoChats.filter(chat => chat.messages.length && chat.messages[chat.messages.length - 1].from === "user");
+      [[incoming, incomingChats, "Пока входящих сообщений нет. Выставь объявление — демо-покупатель может написать тебе."], [outgoing, outgoingChats, "Исходящих сообщений пока нет. Открой входящий чат и ответь боту."]].forEach(([container, chats, emptyText]) => {
+        if (!chats.length) { const empty = document.createElement("p"); empty.className = "details"; empty.textContent = emptyText; container.appendChild(empty); return; }
+        chats.forEach(chat => {
+          const card = document.createElement("div"); card.style.cssText = "padding:12px 0;border-bottom:1px solid var(--border-color, #e5e7eb)";
+          const title = document.createElement("strong"); title.textContent = chat.botName + " · " + chat.botUsername;
+          const product = document.createElement("p"); product.className = "details"; product.textContent = "По объявлению: " + chat.productName; product.style.margin = "6px 0";
+          const last = document.createElement("p"); last.className = "details"; last.textContent = chat.messages.length ? chat.messages[chat.messages.length - 1].text : "";
+          const open = document.createElement("button"); open.type = "button"; open.className = "primary-button"; open.textContent = "Открыть чат"; open.style.marginTop = "8px"; open.addEventListener("click", () => openDemoChat(chat.id));
+          card.append(title, product, last, open); container.appendChild(card);
+        });
+      });
+    }
+    function openDemoChat(chatId) {
+      const chat = demoChats.find(item => item.id === chatId); if (!chat) return;
+      activeChatId = chatId;
+      getPage("incomingChatsList").classList.add("hidden"); getPage("outgoingChatsList").classList.add("hidden");
+      getPage("chatConversation").classList.remove("hidden");
+      getPage("chatConversationTitle").textContent = chat.botName + " (" + chat.botUsername + ")";
+      const messages = getPage("chatMessages"); messages.replaceChildren();
+      chat.messages.forEach(message => {
+        const bubble = document.createElement("div"); bubble.style.cssText = "padding:10px 12px;border-radius:12px;max-width:90%;white-space:pre-wrap;overflow-wrap:anywhere;" + (message.from === "user" ? "justify-self:end;background:var(--accent-color, #e8f2ff)" : "justify-self:start;background:var(--card-background, #f3f4f6)");
+        const sender = document.createElement("strong"); sender.textContent = message.from === "user" ? "Ты" : chat.botName + " · демо-бот";
+        const body = document.createElement("div"); body.textContent = message.text; body.style.marginTop = "4px";
+        const time = document.createElement("small"); time.textContent = new Date(message.time).toLocaleString("ru-RU", { day:"2-digit", month:"2-digit", hour:"2-digit", minute:"2-digit" }); time.style.opacity = ".7";
+        bubble.append(sender, body, time); messages.appendChild(bubble);
+      });
+      showPage("otherPage"); getPage("chatsPanel").classList.remove("hidden");
+      messages.scrollTop = messages.scrollHeight;
+    }
     function setChatFolder(folder) {
       const incoming = folder === "incoming";
       getPage("incomingChatsList").classList.toggle("hidden", !incoming);
       getPage("outgoingChatsList").classList.toggle("hidden", incoming);
+      getPage("chatConversation").classList.add("hidden");
       getPage("incomingChatsButton").className = incoming ? "primary-button" : "secondary-button";
       getPage("outgoingChatsButton").className = incoming ? "secondary-button" : "primary-button";
+      renderChatLists();
     }
     getPage("incomingChatsButton").addEventListener("click", () => setChatFolder("incoming"));
     getPage("outgoingChatsButton").addEventListener("click", () => setChatFolder("outgoing"));
+    getPage("backToChats").addEventListener("click", () => { activeChatId = null; setChatFolder("incoming"); });
+    getPage("chatReplyForm").addEventListener("submit", event => {
+      event.preventDefault();
+      const chat = demoChats.find(item => item.id === activeChatId), input = getPage("chatReplyInput"), text = input.value.trim();
+      if (!chat || !text) return;
+      chat.messages.push(makeBotMessage(text, "user"));
+      const replies = ["Понял, спасибо! А можно узнать ещё немного о товаре?", "Хорошо, спасибо за ответ! Когда удобно обсудить детали?", "Спасибо! Я подумаю и напишу, если решу купить.", "А состояние и комплектация соответствуют описанию?"];
+      chat.messages.push(makeBotMessage(replies[Math.floor(Math.random() * replies.length)], "bot"));
+      saveDemoChats(); input.value = ""; openDemoChat(chat.id);
+    });
 
     function getProfile() {
       try { return JSON.parse(localStorage.getItem("reloop-profile") || "null"); } catch (_) { return null; }
