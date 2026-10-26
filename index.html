@@ -314,7 +314,6 @@
     });
     function makeProductImage(product) {
       const sketchfabModels = {
-        3008: { id: "e3bca75b63c841c0a8aee8733b84a8a9", title: "3D-модель Samsung Galaxy S25 Ultra" },
         3009: { id: "6fd1283ec05d412d99a3f23b2e80e473", title: "3D-модель Apple iPhone 15 Pro" },
         3010: { id: "14e45693bc3949d3a2833ff1b83880c3", title: "3D-модель Google Pixel 9 Pro" },
         3013: { id: "adc4ea80bf314a14b8addcb687e6506a", title: "3D-модель Apple iPhone 14" }
@@ -330,7 +329,7 @@
         viewer.setAttribute("loading", "lazy");
         return viewer;
       }
-      if (Number(product.id) === 3001 || Number(product.id) === 3003 || Number(product.id) === 3004 || Number(product.id) === 3005 || Number(product.id) === 3006 || Number(product.id) === 3007) {
+      if ([3001, 3003, 3004, 3005, 3006, 3007, 3008].includes(Number(product.id))) {
         const viewer = document.createElement("model-viewer");
         viewer.className = "product-image product-3d";
         const modelConfig = {
@@ -339,7 +338,8 @@
           3004: { src: "./apple_iphone_18_pro_max_burgundy_2026.glb", alt: "3D-модель Apple iPhone 18 Pro Max Burgundy" },
           3005: { src: "./iphone_7_rose.glb", alt: "3D-модель Apple iPhone 7 Rose Gold" },
           3006: { src: "./black_apple_ipad_pro_13_m4.glb", alt: "3D-модель Apple iPad Pro 13 M4 Space Black" },
-          3007: { src: "./macbook_pro_14-inch_m5.glb", alt: "3D-модель Apple MacBook Pro 14 дюймов M5" }
+          3007: { src: "./macbook_pro_14-inch_m5.glb", alt: "3D-модель Apple MacBook Pro 14 дюймов M5" },
+          3008: { src: "./samsung_galaxy_s25_ultra.glb", alt: "3D-модель Samsung Galaxy S25 Ultra" }
         }[Number(product.id)];
         viewer.src = modelConfig.src;
         viewer.alt = modelConfig.alt;
