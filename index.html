@@ -322,11 +322,12 @@
         viewer.setAttribute("loading", "lazy");
         return viewer;
       }
-      if (Number(product.id) === 3001) {
+      if (Number(product.id) === 3001 || Number(product.id) === 3003) {
         const viewer = document.createElement("model-viewer");
         viewer.className = "product-image product-3d";
-        viewer.src = "./iphone_16_pro_max.glb";
-        viewer.alt = "3D-модель Apple iPhone 16 Pro Max";
+        const isProMax = Number(product.id) === 3001;
+        viewer.src = isProMax ? "./iphone_16_pro_max.glb" : "./iphone_16_-_free.glb";
+        viewer.alt = isProMax ? "3D-модель Apple iPhone 16 Pro Max" : "3D-модель Apple iPhone 16";
         viewer.setAttribute("camera-controls", "");
         viewer.setAttribute("auto-rotate", "");
         viewer.setAttribute("rotation-per-second", "18deg");
@@ -380,12 +381,15 @@
       localStorage.setItem("reloop-favorites", JSON.stringify(favoriteIds));
       localStorage.setItem("reloop-inventory", JSON.stringify(inventoryItems));
     } catch (_) {}
-    // Стартовые телефоны ReLoop: iPhone 16 Pro Max и Samsung Galaxy S25 Ultra.
+    // Стартовые телефоны ReLoop: iPhone 16 Pro Max, iPhone 16 и Samsung Galaxy S25 Ultra.
     if (!products.some(product => Number(product.id) === 3001)) {
       products.unshift({ id: 3001, name: "Apple iPhone 16 Pro Max · 256 GB · Natural Titanium", price: 780, condition: "Отличное состояние", description: "iPhone 16 Pro Max с интерактивной 3D-моделью, которую можно вращать на 360°.", image: "📱", photo: null, category: "phone" });
     }
     if (!products.some(product => Number(product.id) === 3002)) {
       products.unshift({ id: 3002, name: "Samsung Galaxy S25 Ultra · 256 GB · Titanium Black", price: 650, condition: "Отличное состояние", description: "Samsung Galaxy S25 Ultra в чёрном титановом цвете. Интерактивная 3D-модель Sketchfab.", image: "📱", photo: null, category: "phone" });
+    }
+    if (!products.some(product => Number(product.id) === 3003)) {
+      products.unshift({ id: 3003, name: "Apple iPhone 16 · 128 GB", price: 520, condition: "Хорошее состояние", description: "Б/у iPhone 16 с интерактивной 3D-моделью.", image: "📱", photo: null, category: "phone" });
     }
     function saveFavorites() { try { localStorage.setItem("reloop-favorites", JSON.stringify(favoriteIds)); } catch (_) {} }
     function saveUserListings() {
