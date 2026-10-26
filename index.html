@@ -312,14 +312,15 @@
       alert("Баланс пополнен на " + formatRub(amount) + "!");
     });
     function makeProductImage(product) {
-      if (Number(product.id) === 3001 || Number(product.id) === 3003 || Number(product.id) === 3004 || Number(product.id) === 3005) {
+      if (Number(product.id) === 3001 || Number(product.id) === 3003 || Number(product.id) === 3004 || Number(product.id) === 3005 || Number(product.id) === 3006) {
         const viewer = document.createElement("model-viewer");
         viewer.className = "product-image product-3d";
         const modelConfig = {
           3001: { src: "./iphone_16_pro_max.glb", alt: "3D-модель Apple iPhone 16 Pro Max" },
           3003: { src: "./iphone_16_-_free.glb", alt: "3D-модель Apple iPhone 16" },
           3004: { src: "./apple_iphone_18_pro_max_burgundy_2026.glb", alt: "3D-модель Apple iPhone 18 Pro Max Burgundy" },
-          3005: { src: "./iphone_7_rose.glb", alt: "3D-модель Apple iPhone 7 Rose Gold" }
+          3005: { src: "./iphone_7_rose.glb", alt: "3D-модель Apple iPhone 7 Rose Gold" },
+          3006: { src: "./black_apple_ipad_pro_13_m4.glb", alt: "3D-модель Apple iPad Pro 13 M4 Space Black" }
         }[Number(product.id)];
         viewer.src = modelConfig.src;
         viewer.alt = modelConfig.alt;
@@ -376,7 +377,7 @@
       localStorage.setItem("reloop-favorites", JSON.stringify(favoriteIds));
       localStorage.setItem("reloop-inventory", JSON.stringify(inventoryItems));
     } catch (_) {}
-    // Стартовые телефоны ReLoop: iPhone 18 Pro Max Burgundy, iPhone 16 Pro Max, iPhone 16 и iPhone 7 Rose Gold.
+    // Стартовые телефоны ReLoop: iPhone 18 Pro Max Burgundy, iPhone 16 Pro Max, iPhone 16 и iPhone 7 Rose Gold; iPad Pro 13 M4.
     if (!products.some(product => Number(product.id) === 3001)) {
       products.unshift({ id: 3001, name: "Apple iPhone 16 Pro Max · 256 GB · Natural Titanium", price: 780, condition: "Отличное состояние", description: "iPhone 16 Pro Max с интерактивной 3D-моделью, которую можно вращать на 360°.", image: "📱", photo: null, category: "phone" });
     }
@@ -388,6 +389,9 @@
     }
     if (!products.some(product => Number(product.id) === 3005)) {
       products.unshift({ id: 3005, name: "Apple iPhone 7 · Rose Gold · 128 GB", price: 120, condition: "Хорошее состояние", description: "iPhone 7 в розово-золотом цвете с интерактивной 3D-моделью.", image: "📱", photo: null, category: "phone" });
+    }
+    if (!products.some(product => Number(product.id) === 3006)) {
+      products.unshift({ id: 3006, name: "Apple iPad Pro 13″ M4 · Space Black · 256 GB", price: 1100, condition: "Отличное состояние", description: "iPad Pro 13 дюймов с чипом M4 в цвете Space Black и интерактивной 3D-моделью.", image: "📱", photo: null, category: "tablet" });
     }
     function saveFavorites() { try { localStorage.setItem("reloop-favorites", JSON.stringify(favoriteIds)); } catch (_) {} }
     function saveUserListings() {
