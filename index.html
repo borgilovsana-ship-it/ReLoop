@@ -38,6 +38,47 @@
     .phone-camera-dot.two { top: 7%; left: 35%; }
     .phone-camera-dot.three { top: 32%; left: 8%; }
     .phone-camera-flash { position: absolute; z-index: 2; top: 35%; left: 39%; width: 9%; aspect-ratio: 1; border-radius: 50%; background: #e9e5ce; box-shadow: 0 0 3px #fff; }
+    .phone-variant-iphone .phone-camera-plate { width: 39%; height: 34%; border-radius: 22%; }
+    .phone-variant-iphone .phone-camera-dot { width: 30%; top: 9%; left: 9%; }
+    .phone-variant-iphone .phone-camera-dot.two { top: 48%; left: 48%; }
+    .phone-variant-iphone .phone-camera-dot.three { display: none; }
+    .phone-variant-iphone .phone-camera-flash { top: 16%; left: 58%; }
+    .phone-variant-samsung .phone-camera-plate { left: 7%; top: 7%; width: 27%; height: 64%; border: 0; background: transparent; box-shadow: none; }
+    .phone-variant-samsung .phone-camera-dot, .phone-variant-samsung .phone-camera-dot.two, .phone-variant-samsung .phone-camera-dot.three { left: 8%; top: 0; width: 68%; }
+    .phone-variant-samsung .phone-camera-dot.two { top: 31%; }
+    .phone-variant-samsung .phone-camera-dot.three { display: block; top: 62%; }
+    .phone-variant-samsung .phone-camera-flash { top: 66%; left: 28%; width: 17%; }
+    .phone-variant-pixel .phone-camera-plate { left: 0; top: 12%; width: 100%; height: 20%; border-radius: 12%; background: linear-gradient(120deg,#343945,#11141b); border: 1px solid #7d8490; }
+    .phone-variant-pixel .phone-camera-dot { top: 23%; left: 12%; width: 18%; }
+    .phone-variant-pixel .phone-camera-dot.two { top: 23%; left: 40%; width: 18%; }
+    .phone-variant-pixel .phone-camera-dot.three { top: 23%; left: 68%; width: 18%; }
+    .phone-variant-pixel .phone-camera-flash { top: 26%; left: 88%; width: 7%; }
+    .phone-variant-fold .phone-device { width: 48%; border-radius: 11% / 6%; }
+    .phone-variant-flip .phone-device { height: 67%; width: 43%; border-radius: 17% / 10%; }
+    .phone-variant-nothing .phone-camera-plate { background: #d7dadd; border: 2px solid #adb3bb; box-shadow: none; }
+    .phone-variant-nothing .phone-camera-dot { border-color: #dce0e5; }
+    .phone-tone-0 .phone-back { background: linear-gradient(120deg,#e8e9ed,#9ba2ad 45%,#555d69); }
+    .phone-tone-1 .phone-back { background: linear-gradient(120deg,#b7d9cc,#4d8d7c 48%,#23483f); }
+    .phone-tone-2 .phone-back { background: linear-gradient(120deg,#f1c3c7,#c96c82 48%,#71334b); }
+    .phone-tone-3 .phone-back { background: linear-gradient(120deg,#d5c5f1,#8d70c4 48%,#44345f); }
+    .phone-tone-4 .phone-back { background: linear-gradient(120deg,#f1e4bd,#bca36a 48%,#6e5b36); }
+    .phone-tone-5 .phone-back { background: linear-gradient(120deg,#a9d5f4,#4a8db9 48%,#24445f); }
+    .phone-tone-6 .phone-back { background: linear-gradient(120deg,#d7d9dc,#858b95 48%,#383d46); }
+    .phone-tone-7 .phone-back { background: linear-gradient(120deg,#e4bda0,#b56c46 48%,#633b2d); }
+    .phone-tone-0 .phone-device { background: linear-gradient(115deg,#d7dbe1,#555d69 40%,#b7bec8 58%,#454b55); }
+    .phone-tone-1 .phone-device { background: linear-gradient(115deg,#c3e5d7,#397c69 40%,#b5d9cd 58%,#285748); }
+    .phone-tone-2 .phone-device { background: linear-gradient(115deg,#f3d2d5,#a74f68 40%,#e6a7b4 58%,#71334b); }
+    .phone-tone-3 .phone-device { background: linear-gradient(115deg,#e1d5f5,#7258a4 40%,#c5b2e8 58%,#44345f); }
+    .phone-tone-4 .phone-device { background: linear-gradient(115deg,#f7edcf,#a58c52 40%,#e2d19c 58%,#6e5b36); }
+    .phone-tone-5 .phone-device { background: linear-gradient(115deg,#c4e5fb,#397ba6 40%,#9ac7e5 58%,#24445f); }
+    .phone-tone-6 .phone-device { background: linear-gradient(115deg,#e1e3e7,#626975 40%,#b2b7c0 58%,#383d46); }
+    .phone-tone-7 .phone-device { background: linear-gradient(115deg,#f1d0b7,#995735 40%,#d89d78 58%,#633b2d); }
+    .phone-tone-1 .phone-glass::before { background: radial-gradient(ellipse at 25% 25%,#b8ffe0,transparent 34%),radial-gradient(ellipse at 75% 65%,#168d82,transparent 45%),linear-gradient(145deg,#092b30,#123f45,#070a14); }
+    .phone-tone-2 .phone-glass::before { background: radial-gradient(ellipse at 25% 25%,#ffd2df,transparent 34%),radial-gradient(ellipse at 75% 65%,#ff638d,transparent 45%),linear-gradient(145deg,#3a102c,#602044,#070a14); }
+    .phone-tone-3 .phone-glass::before { background: radial-gradient(ellipse at 25% 25%,#e5d5ff,transparent 34%),radial-gradient(ellipse at 75% 65%,#9b6cff,transparent 45%),linear-gradient(145deg,#1a123e,#32205e,#070a14); }
+    .phone-tone-4 .phone-glass::before { background: radial-gradient(ellipse at 25% 25%,#fff1bd,transparent 34%),radial-gradient(ellipse at 75% 65%,#c78a39,transparent 45%),linear-gradient(145deg,#39270e,#61451e,#070a14); }
+    .phone-tone-5 .phone-glass::before { background: radial-gradient(ellipse at 25% 25%,#c7efff,transparent 34%),radial-gradient(ellipse at 75% 65%,#36a6ed,transparent 45%),linear-gradient(145deg,#10233d,#153c60,#070a14); }
+    .phone-tone-7 .phone-glass::before { background: radial-gradient(ellipse at 25% 25%,#ffe0bd,transparent 34%),radial-gradient(ellipse at 75% 65%,#ed8951,transparent 45%),linear-gradient(145deg,#3c1d12,#65351f,#070a14); }
     .phone-back { position: absolute; inset: 0; border-radius: inherit; background: linear-gradient(120deg, #c9ced5, #737b88 45%, #30343c); border: 1px solid #e2e5ea; }
     .phone-camera-plate { position: absolute; z-index: 1; top: 5%; left: 5%; width: 43%; height: 39%; border-radius: 18%; background: linear-gradient(135deg, #c6cbd2, #555c67); border: 1px solid #8d949e; box-shadow: 1px 2px 3px #0005; }
 
@@ -417,11 +458,16 @@
       }
       if (getProductCategory(product) === "phone") {
         const scene = document.createElement("div");
-        scene.className = "product-image phone-art"; scene.setAttribute("role", "img"); scene.setAttribute("aria-label", "3D-иллюстрация телефона: " + product.name);
+        const model = product.name.toLowerCase();
+        const variant = /pixel/.test(model) ? "pixel" : /samsung|galaxy/.test(model) ? "samsung" : /nothing/.test(model) ? "nothing" : /fold/.test(model) ? "fold" : /flip/.test(model) ? "flip" : /iphone/.test(model) && /pro|max/.test(model) ? "iphone-pro" : /iphone/.test(model) ? "iphone" : "android";
+        const tone = Math.abs(Number(product.id) || 0) % 8;
+        scene.className = "product-image phone-art phone-variant-" + variant + " phone-tone-" + tone;
+        scene.setAttribute("role", "img"); scene.setAttribute("aria-label", "3D-иллюстрация телефона: " + product.name);
         const device = document.createElement("div"); device.className = "phone-device";
         const back = document.createElement("div"); back.className = "phone-back";
         const plate = document.createElement("div"); plate.className = "phone-camera-plate";
-        ["phone-camera-dot", "phone-camera-dot two", "phone-camera-dot three"].forEach(className => { const lens = document.createElement("span"); lens.className = className; plate.appendChild(lens); });
+        const lensClasses = variant === "iphone" ? ["phone-camera-dot", "phone-camera-dot two"] : ["phone-camera-dot", "phone-camera-dot two", "phone-camera-dot three"];
+        lensClasses.forEach(className => { const lens = document.createElement("span"); lens.className = className; plate.appendChild(lens); });
         const flash = document.createElement("span"); flash.className = "phone-camera-flash"; plate.appendChild(flash); back.appendChild(plate);
         const glass = document.createElement("div"); glass.className = "phone-glass";
         const side = document.createElement("span"); side.className = "phone-side";
