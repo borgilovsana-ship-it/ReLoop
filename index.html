@@ -198,7 +198,7 @@
     </nav>
   </div>
   <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.57.0/dist/umd/supabase.min.js" integrity="" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.57.0/dist/umd/supabase.min.js" crossorigin="anonymous"></script>
   <script>
     const products = [];
     
@@ -821,12 +821,27 @@
       }
     });
 
-    if (savedProfile && savedProfile.username && savedProfile.name) {
-      applyProfile(savedProfile);
-    } else {
-      getPage("mainApp").classList.add("hidden");
-      getPage("welcomeScreen").classList.remove("hidden");
-    }
+    getPage("mainApp").classList.add("hidden");
+    getPage("welcomeScreen").classList.remove("hidden");
+    supabaseClient.auth.getSession().then(async ({ data, error }) => {
+      if (error) console.warn("Не удалось восстановить сессию Supabase:", error.message);
+      if (data && data.session && data.session.user) {
+        try {
+          await syncAuthenticatedProfile(data.session.user, "", "");
+        } catch (profileError) {
+          const authError = getPage("welcomeError");
+          authError.textContent = "Вход выполнен, но профиль не загрузился: " + profileError.message;
+          authError.classList.remove("hidden");
+        }
+      }
+    });
+    supabaseClient.auth.onAuthStateChange((event, session) => {
+      if (event === "SIGNED_OUT") {
+        localStorage.removeItem("reloop-profile");
+        getPage("mainApp").classList.add("hidden");
+        getPage("welcomeScreen").classList.remove("hidden");
+      }
+    });
 
     renderProducts();
   </script>
