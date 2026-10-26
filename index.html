@@ -314,7 +314,6 @@
     });
     function makeProductImage(product) {
       const sketchfabModels = {
-        3010: { id: "14e45693bc3949d3a2833ff1b83880c3", title: "3D-модель Google Pixel 9 Pro" },
       };
       const sketchfabModel = sketchfabModels[Number(product.id)];
       if (sketchfabModel) {
@@ -415,17 +414,9 @@
     if (!products.some(product => Number(product.id) === 3009)) {
       products.unshift({ id: 3009, name: "Apple iPhone 15 Pro · 256 GB · Blue Titanium", price: 680, condition: "Хорошее состояние", description: "Компактный Pro-смартфон с титановым корпусом и камерой высокого класса.", image: "📱", photo: null, category: "phone" });
     }
-    if (!products.some(product => Number(product.id) === 3010)) {
-      products.unshift({ id: 3010, name: "Google Pixel 9 Pro · 256 GB · Obsidian", price: 750, condition: "Отличное состояние", description: "Смартфон Google с продвинутой вычислительной фотографией и функциями ИИ.", image: "📱", photo: null, category: "phone" });
-    }
-    if (!products.some(product => Number(product.id) === 3011)) {
-      products.unshift({ id: 3011, name: "Xiaomi 15 · 256 GB · Black", price: 620, condition: "Хорошее состояние", description: "Компактный флагман Xiaomi с ярким экраном и быстрой зарядкой.", image: "📱", photo: null, category: "phone" });
-    }
-    if (!products.some(product => Number(product.id) === 3012)) {
-      products.unshift({ id: 3012, name: "Samsung Galaxy Z Flip6 · 256 GB · Silver Shadow", price: 700, condition: "Хорошее состояние", description: "Складной смартфон Samsung с компактным форм-фактором и внешним экраном.", image: "📱", photo: null, category: "phone" });
-    }
-    if (!products.some(product => Number(product.id) === 3013)) {
-      products.unshift({ id: 3013, name: "Apple iPhone 14 · 128 GB · Midnight", price: 360, condition: "Хорошее состояние", description: "Популярный iPhone с OLED-дисплеем и двойной основной камерой.", image: "📱", photo: null, category: "phone" });
+    // Удалённые пользователем товары не должны возвращаться в каталог.
+    for (let i = products.length - 1; i >= 0; i--) {
+      if ([3010, 3011, 3012, 3013].includes(Number(products[i].id))) products.splice(i, 1);
     }
     if (!products.some(product => Number(product.id) === 3014)) {
       products.unshift({ id: 3014, name: "Apple iPhone 14 Pro · 256 GB · Space Black", price: 480, condition: "Хорошее состояние", description: "iPhone 14 Pro с интерактивной локальной 3D-моделью.", image: "📱", photo: null, category: "phone" });
