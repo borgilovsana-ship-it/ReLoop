@@ -334,7 +334,7 @@
         viewer.setAttribute("loading", "lazy");
         return viewer;
       }
-      if ([3001, 3003, 3004, 3005, 3006, 3007, 3008, 3009, 3014, 3015].includes(Number(product.id))) {
+      if ([3001, 3003, 3004, 3005, 3006, 3007, 3008, 3009, 3014, 3015, 3016].includes(Number(product.id))) {
         const viewer = document.createElement("model-viewer");
         viewer.className = "product-image product-3d";
         const modelConfig = {
@@ -347,7 +347,8 @@
           3008: { src: "./samsung_galaxy_s25_ultra.glb", alt: "3D-модель Samsung Galaxy S25 Ultra" },
           3009: { src: "./iphone_15_pro.glb", alt: "3D-модель Apple iPhone 15 Pro" },
           3014: { src: "./iphone_14_pro.glb", alt: "3D-модель Apple iPhone 14 Pro" },
-          3015: { src: "./nothing_phone_2.glb", alt: "3D-модель Nothing Phone (2)" }
+          3015: { src: "./nothing_phone_2.glb", alt: "3D-модель Nothing Phone (2)" },
+          3016: { src: "./oneplus_12.glb", alt: "3D-модель OnePlus 12" }
         }[Number(product.id)];
         viewer.src = modelConfig.src;
         viewer.alt = modelConfig.alt;
@@ -432,6 +433,9 @@
     }
     if (!products.some(product => Number(product.id) === 3014)) {
       products.unshift({ id: 3014, name: "Apple iPhone 14 Pro · 256 GB · Space Black", price: 480, condition: "Хорошее состояние", description: "iPhone 14 Pro с интерактивной локальной 3D-моделью.", image: "📱", photo: null, category: "phone" });
+    }
+    if (!products.some(product => Number(product.id) === 3016)) {
+      products.unshift({ id: 3016, name: "OnePlus 12 · 256 GB · Flowy Emerald", price: 620, condition: "Хорошее состояние", description: "OnePlus 12 с интерактивной локальной 3D-моделью.", image: "📱", photo: null, category: "phone" });
     }
 
     if (!products.some(product => Number(product.id) === 3006)) {
