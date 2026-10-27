@@ -321,6 +321,7 @@
     });
     function makeProductImage(product) {
       const sketchfabModels = {
+        3016: { id: "d7252504503247888784eed1af7f61b0", title: "3D-модель Redmi 9 (Sketchfab, автор Miguel Adão)" }
       };
       const sketchfabModel = sketchfabModels[Number(product.id)];
       if (sketchfabModel) {
@@ -431,6 +432,9 @@
     }
     if (!products.some(product => Number(product.id) === 3014)) {
       products.unshift({ id: 3014, name: "Apple iPhone 14 Pro · 256 GB · Space Black", price: 480, condition: "Хорошее состояние", description: "iPhone 14 Pro с интерактивной локальной 3D-моделью.", image: "📱", photo: null, category: "phone" });
+    }
+    if (!products.some(product => Number(product.id) === 3016)) {
+      products.unshift({ id: 3016, name: "Redmi 9 · 64 GB · Carbon Gray", price: 60, condition: "Хорошее состояние", description: "Redmi 9 с интерактивной 3D-моделью Sketchfab.", image: "📱", photo: null, category: "phone" });
     }
     if (!products.some(product => Number(product.id) === 3006)) {
       products.unshift({ id: 3006, name: "Apple iPad Pro 13″ M4 · Space Black · 256 GB", price: 1100, condition: "Отличное состояние", description: "iPad Pro 13 дюймов с чипом M4 в цвете Space Black и интерактивной 3D-моделью.", image: "📱", photo: null, category: "tablet" });
