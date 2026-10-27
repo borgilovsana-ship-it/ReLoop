@@ -320,9 +320,7 @@
       alert("Баланс пополнен на " + formatRub(amount) + "!");
     });
     function makeProductImage(product) {
-      const sketchfabModels = {
-        3016: { id: "d7252504503247888784eed1af7f61b0", title: "3D-модель Redmi 9 (Sketchfab, автор Miguel Adão)" }
-      };
+      const sketchfabModels = {};
       const sketchfabModel = sketchfabModels[Number(product.id)];
       if (sketchfabModel) {
         const viewer = document.createElement("iframe");
