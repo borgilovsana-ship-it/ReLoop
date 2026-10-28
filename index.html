@@ -113,7 +113,7 @@
   <div class="app" id="mainApp">
     <header class="market-header" id="marketHeader">
       <div class="app-title">Re<span>Loop</span></div>
-      <div class="search-row"><label class="search-box"><span>⌕</span><input id="searchInput" type="search" placeholder="Искать товары..." aria-label="Поиск товаров"></label><button type="button" class="mechanics-toggle" id="mechanicsToggle" aria-expanded="false">⚙ Механика</button></div><div class="category-row hidden" id="categoryRow" aria-label="Категории механики"><button type="button" class="category-button" data-category="phone">Телефоны</button><button type="button" class="category-button" data-category="laptop">Ноутбуки</button><button type="button" class="category-button" data-category="tablet">Планшеты</button></div>
+      <div class="search-row"><label class="search-box"><span>⌕</span><input id="searchInput" type="search" placeholder="Искать товары..." aria-label="Поиск товаров"></label><button type="button" class="mechanics-toggle" id="mechanicsToggle" aria-expanded="false">⚙ Механика</button></div><div class="category-row hidden" id="categoryRow" aria-label="Категории механики"><button type="button" class="category-button" data-category="phone">Телефоны</button><button type="button" class="category-button" data-category="laptop">Ноутбуки</button><button type="button" class="category-button" data-category="tablet">Планшеты</button><button type="button" class="category-button" data-category="used">♻️ Б/У</button><button type="button" class="category-button" data-category="aliexpress">🛍️ AliExpress</button></div>
     </header>
     <main>
       <section class="page" id="marketPage"><h2 id="marketHeading">Популярные товары</h2><div class="product-grid" id="productGrid"></div></section>
@@ -198,7 +198,14 @@
   <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
   
   <script>
-    const products = [];
+    const products = [
+      { id: 4101, name: "iPhone 13 — пример объявления", description: "Демо-карточка для локального каталога. Перед покупкой проверьте состояние, батарею и продавца.", condition: "Б/У · пример объявления", price: 180, image: "📱", photo: null, category: "used", demo: true },
+      { id: 4102, name: "Samsung Galaxy S22 — пример объявления", description: "Демо-карточка. Цена иллюстративная, это не реальное предложение продавца.", condition: "Б/У · пример объявления", price: 150, image: "📱", photo: null, category: "used", demo: true },
+      { id: 4201, name: "Xiaomi Redmi Note — AliExpress", description: "Откройте актуальные предложения и проверьте модель, продавца, доставку и итоговую цену на AliExpress.", condition: "Внешний магазин · цена на сайте продавца", price: 0, image: "📱", photo: null, category: "aliexpress", externalUrl: "https://www.aliexpress.com/w/wholesale-xiaomi-redmi-note.html" },
+      { id: 4202, name: "POCO X Series — AliExpress", description: "Поиск смартфонов POCO. Цена и наличие зависят от выбранной модели и региона.", condition: "Внешний магазин · цена на сайте продавца", price: 0, image: "📱", photo: null, category: "aliexpress", externalUrl: "https://www.aliexpress.com/w/wholesale-poco-x.html" },
+      { id: 4203, name: "OnePlus смартфоны — AliExpress", description: "Поиск смартфонов OnePlus. Проверяйте совместимость сетей, прошивку и условия доставки.", condition: "Внешний магазин · цена на сайте продавца", price: 0, image: "📱", photo: null, category: "aliexpress", externalUrl: "https://www.aliexpress.com/w/wholesale-oneplus-phone.html" },
+      { id: 4204, name: "realme смартфоны — AliExpress", description: "Поиск смартфонов realme. Текущие предложения открываются на AliExpress.", condition: "Внешний магазин · цена на сайте продавца", price: 0, image: "📱", photo: null, category: "aliexpress", externalUrl: "https://www.aliexpress.com/w/wholesale-realme-phone.html" }
+    ];
     
     // Полностью удаляем телефоны из стартового каталога; планшеты и ноутбуки оставляем.
     for (let i = products.length - 1; i >= 0; i--) {
@@ -217,7 +224,7 @@
       getPage("mechanicsToggle").classList.add("active");
       getPage("mechanicsToggle").setAttribute("aria-expanded", "true");
       document.querySelectorAll("[data-category]").forEach(button => button.classList.toggle("active", button.dataset.category === category));
-      getPage("marketHeading").textContent = category === "all" ? "Все товары" : category === "phone" ? "Телефоны" : category === "tablet" ? "Планшеты" : "Ноутбуки";
+      getPage("marketHeading").textContent = ({ all: "Все товары", phone: "Телефоны", tablet: "Планшеты", laptop: "Ноутбуки", used: "♻️ Б/У телефоны", aliexpress: "🛍️ AliExpress · китайские смартфоны", mechanics: "Механика" })[category] || "Все товары";
       renderProducts(getPage("searchInput").value);
     }
     let nextId = 3000, selectedProduct = null, photoDataUrl = null;
@@ -453,8 +460,8 @@
         const card = document.createElement("article"); card.className = "product-card";
         const name = document.createElement("div"); name.className = "product-name"; name.textContent = product.name;
         const condition = document.createElement("div"); condition.className = "product-condition"; condition.textContent = product.condition;
-        const price = document.createElement("div"); price.className = "product-price"; price.textContent = formatPrice(product.price);
-        const buy = document.createElement("button"); buy.className = "primary-button"; buy.textContent = "Купить"; buy.addEventListener("click", () => openConfirmation(product));
+        const price = document.createElement("div"); price.className = "product-price"; price.textContent = product.externalUrl ? "Цена на AliExpress" : formatPrice(product.price);
+        const buy = document.createElement("button"); buy.className = "primary-button"; buy.textContent = product.externalUrl ? "Открыть AliExpress" : product.demo ? "Демо-покупка" : "Купить"; buy.addEventListener("click", () => { if (product.externalUrl) { window.open(product.externalUrl, "_blank", "noopener,noreferrer"); return; } openConfirmation(product); });
         const offer = document.createElement("button"); offer.className = "secondary-button"; offer.textContent = "Предложить цену"; offer.addEventListener("click", () => alert("Торг подключим следующим шагом!"));
         const favorite = document.createElement("button"); favorite.type = "button"; favorite.className = "favorite-button"; favorite.textContent = favoriteIds.includes(product.id) ? "♥" : "♡";
         favorite.addEventListener("click", () => { favoriteIds = favoriteIds.includes(product.id) ? favoriteIds.filter(id => id !== product.id) : [...favoriteIds, product.id]; saveFavorites(); renderProducts(getPage("searchInput").value); updateProfileView(); });
