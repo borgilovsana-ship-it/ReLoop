@@ -12,7 +12,7 @@
     button { cursor: pointer; }
     .app { min-height: 100vh; min-height: 100dvh; padding-bottom: calc(82px + env(safe-area-inset-bottom)); }
     .market-header { padding: 20px 16px 14px; }
-    .app-title { font-size: 27px; font-weight: 800; letter-spacing: -1px; margin-bottom: 18px; }
+    .header-brand-row { display:flex; align-items:center; justify-content:space-between; gap:8px; margin-bottom:18px; } .app-title { font-size: 27px; font-weight: 800; letter-spacing: -1px; margin:0; flex:0 0 auto; } .quick-market-buttons { display:flex; align-items:center; gap:7px; } .quick-market-button { border:1px solid #ddd; border-radius:12px; background:#fff; color:#171717; min-height:38px; padding:0 11px; font-size:12px; font-weight:800; white-space:nowrap; } .quick-market-button.active { background:#171717; color:#fff; border-color:#171717; }
     .app-title span { color: #888; }
     .search-box { height: 46px; display: flex; align-items: center; gap: 10px; padding: 0 13px; background: #f4f4f4; border: 1px solid #eee; border-radius: 14px; }
     .search-row { display:flex; flex-direction:column; align-items:stretch; gap:8px; }
@@ -112,7 +112,7 @@
   </section>
   <div class="app" id="mainApp">
     <header class="market-header" id="marketHeader">
-      <div class="app-title">Re<span>Loop</span></div>
+      <div class="header-brand-row"><div class="app-title">Re<span>Loop</span></div><div class="quick-market-buttons" aria-label="Магазины"><button type="button" class="quick-market-button" data-quick-market="used">♻️ Б/У</button><button type="button" class="quick-market-button" data-quick-market="aliexpress">🛍️ AliExpress</button></div></div>
       <div class="search-row"><label class="search-box"><span>⌕</span><input id="searchInput" type="search" placeholder="Искать товары..." aria-label="Поиск товаров"></label><button type="button" class="mechanics-toggle" id="mechanicsToggle" aria-expanded="false">⚙ Механика</button></div><div class="category-row hidden" id="categoryRow" aria-label="Категории механики"><button type="button" class="category-button" data-category="phone">Телефоны</button><button type="button" class="category-button" data-category="laptop">Ноутбуки</button><button type="button" class="category-button" data-category="tablet">Планшеты</button><button type="button" class="category-button" data-category="used">♻️ Б/У</button><button type="button" class="category-button" data-category="aliexpress">🛍️ AliExpress</button></div>
     </header>
     <main>
@@ -220,13 +220,16 @@
     }
     function setProductCategory(category) {
       activeCategory = category;
-      getPage("categoryRow").classList.remove("hidden");
-      getPage("mechanicsToggle").classList.add("active");
-      getPage("mechanicsToggle").setAttribute("aria-expanded", "true");
+      const isMechanicsCategory = ["phone", "laptop", "tablet", "mechanics"].includes(category);
+      getPage("categoryRow").classList.toggle("hidden", !isMechanicsCategory);
+      getPage("mechanicsToggle").classList.toggle("active", isMechanicsCategory);
+      getPage("mechanicsToggle").setAttribute("aria-expanded", String(isMechanicsCategory));
       document.querySelectorAll("[data-category]").forEach(button => button.classList.toggle("active", button.dataset.category === category));
+      document.querySelectorAll("[data-quick-market]").forEach(button => button.classList.toggle("active", button.dataset.quickMarket === category));
       getPage("marketHeading").textContent = ({ all: "Все товары", phone: "Телефоны", tablet: "Планшеты", laptop: "Ноутбуки", used: "♻️ Б/У телефоны", aliexpress: "🛍️ AliExpress · китайские смартфоны", mechanics: "Механика" })[category] || "Все товары";
       renderProducts(getPage("searchInput").value);
     }
+    document.querySelectorAll("[data-quick-market]").forEach(button => button.addEventListener("click", () => setProductCategory(button.dataset.quickMarket)));
     let nextId = 3000, selectedProduct = null, photoDataUrl = null;
     const pageIds = ["marketPage", "confirmPage", "resultPage", "createPage", "profilePage", "myListingsPage", "favoritesPage", "inventoryPage", "editProfilePage", "otherPage"];
     function getPage(id) { return document.getElementById(id); }
