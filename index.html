@@ -319,35 +319,28 @@
       renderBalance();
       alert("Баланс пополнен на " + formatRub(amount) + "!");
     });
+    const PRODUCT_3D_MODELS = {
+      3001: { src: "./iphone_16_pro_max.glb", alt: "3D-модель Apple iPhone 16 Pro Max" },
+      3003: { src: "./iphone_16_-_free.glb", alt: "3D-модель Apple iPhone 16" },
+      3004: { src: "./apple_iphone_18_pro_max_burgundy_2026.glb", alt: "3D-модель Apple iPhone 18 Pro Max Burgundy" },
+      3005: { src: "./iphone_7_rose.glb", alt: "3D-модель Apple iPhone 7 Rose Gold" },
+      3006: { src: "./black_apple_ipad_pro_13_m4.glb", alt: "3D-модель Apple iPad Pro 13 M4 Space Black" },
+      3007: { src: "./macbook_pro_14-inch_m5.glb", alt: "3D-модель Apple MacBook Pro 14 дюймов M5" },
+      3008: { src: "./samsung_galaxy_s25_ultra.glb", alt: "3D-модель Samsung Galaxy S25 Ultra" },
+      3009: { src: "./iphone_15_pro.glb", alt: "3D-модель Apple iPhone 15 Pro" },
+      3014: { src: "./iphone_14_pro.glb", alt: "3D-модель Apple iPhone 14 Pro" },
+      3015: { src: "./nothing_phone_2.glb", alt: "3D-модель Nothing Phone (2)" },
+      3016: { src: "./oneplus_12.glb", alt: "3D-модель OnePlus 12" }
+    };
+    function getProductModelConfig(product) {
+      if (product && product.modelSrc) return { src: product.modelSrc, alt: product.modelAlt || ("3D-модель " + product.name) };
+      return PRODUCT_3D_MODELS[Number(product && product.id)] || null;
+    }
     function makeProductImage(product) {
-      const sketchfabModels = {};
-      const sketchfabModel = sketchfabModels[Number(product.id)];
-      if (sketchfabModel) {
-        const viewer = document.createElement("iframe");
-        viewer.className = "product-image product-3d";
-        viewer.src = "https://sketchfab.com/models/" + sketchfabModel.id + "/embed?autostart=1&ui_theme=light&ui_infos=0";
-        viewer.title = sketchfabModel.title;
-        viewer.setAttribute("allow", "autoplay; fullscreen; xr-spatial-tracking");
-        viewer.setAttribute("allowfullscreen", "");
-        viewer.setAttribute("loading", "lazy");
-        return viewer;
-      }
-      if ([3001, 3003, 3004, 3005, 3006, 3007, 3008, 3009, 3014, 3015, 3016].includes(Number(product.id))) {
+      const modelConfig = getProductModelConfig(product);
+      if (modelConfig) {
         const viewer = document.createElement("model-viewer");
         viewer.className = "product-image product-3d";
-        const modelConfig = {
-          3001: { src: "./iphone_16_pro_max.glb", alt: "3D-модель Apple iPhone 16 Pro Max" },
-          3003: { src: "./iphone_16_-_free.glb", alt: "3D-модель Apple iPhone 16" },
-          3004: { src: "./apple_iphone_18_pro_max_burgundy_2026.glb", alt: "3D-модель Apple iPhone 18 Pro Max Burgundy" },
-          3005: { src: "./iphone_7_rose.glb", alt: "3D-модель Apple iPhone 7 Rose Gold" },
-          3006: { src: "./black_apple_ipad_pro_13_m4.glb", alt: "3D-модель Apple iPad Pro 13 M4 Space Black" },
-          3007: { src: "./macbook_pro_14-inch_m5.glb", alt: "3D-модель Apple MacBook Pro 14 дюймов M5" },
-          3008: { src: "./samsung_galaxy_s25_ultra.glb", alt: "3D-модель Samsung Galaxy S25 Ultra" },
-          3009: { src: "./iphone_15_pro.glb", alt: "3D-модель Apple iPhone 15 Pro" },
-          3014: { src: "./iphone_14_pro.glb", alt: "3D-модель Apple iPhone 14 Pro" },
-          3015: { src: "./nothing_phone_2.glb", alt: "3D-модель Nothing Phone (2)" },
-          3016: { src: "./oneplus_12.glb", alt: "3D-модель OnePlus 12" }
-        }[Number(product.id)];
         viewer.src = modelConfig.src;
         viewer.alt = modelConfig.alt;
         viewer.setAttribute("camera-controls", "");
@@ -548,7 +541,9 @@
       if (!name || !description || !Number.isFinite(price) || price <= 0) {
         error.textContent = "Заполни описание и укажи корректную цену."; error.classList.remove("hidden"); return;
       }
-      const newProduct = { ...inventoryItem.product, id: nextId++, name, price, condition: "Товар из инвентаря", description, image: category === "laptop" ? "💻" : category === "tablet" ? "📲" : "📱", photo: photoDataUrl || inventoryItem.product.photo || null, category };
+      const originalProduct = inventoryItem.product;
+      const originalModel = getProductModelConfig(originalProduct);
+      const newProduct = { ...originalProduct, id: nextId++, name, price, condition: "Товар из инвентаря", description, image: category === "laptop" ? "💻" : category === "tablet" ? "📲" : "📱", photo: photoDataUrl || originalProduct.photo || null, category, ...(originalModel ? { modelSrc: originalModel.src, modelAlt: originalModel.alt } : {}) };
       products.unshift(newProduct); userListingIds.push(newProduct.id); inventoryItem.status = "listed"; inventoryItem.listingId = newProduct.id; saveUserListings(); saveInventory();
       createBotChatsForListing(newProduct);
       resetListingForm(); getPage("searchInput").value = ""; renderProducts(); setActiveNav("market"); showPage("marketPage");
