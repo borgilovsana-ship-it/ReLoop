@@ -201,10 +201,10 @@
     const products = [
       { id: 4101, name: "iPhone 13 — пример объявления", description: "Демо-карточка для локального каталога. Перед покупкой проверьте состояние, батарею и продавца.", condition: "Б/У · пример объявления", price: 180, image: "📱", photo: null, category: "used", demo: true },
       { id: 4102, name: "Samsung Galaxy S22 — пример объявления", description: "Демо-карточка. Цена иллюстративная, это не реальное предложение продавца.", condition: "Б/У · пример объявления", price: 150, image: "📱", photo: null, category: "used", demo: true },
-      { id: 4201, name: "Xiaomi Redmi Note — AliExpress", description: "Откройте актуальные предложения и проверьте модель, продавца, доставку и итоговую цену на AliExpress.", condition: "Внешний магазин · цена на сайте продавца", price: 0, image: "📱", photo: null, category: "aliexpress", externalUrl: "https://www.aliexpress.com/w/wholesale-xiaomi-redmi-note.html" },
-      { id: 4202, name: "POCO X Series — AliExpress", description: "Поиск смартфонов POCO. Цена и наличие зависят от выбранной модели и региона.", condition: "Внешний магазин · цена на сайте продавца", price: 0, image: "📱", photo: null, category: "aliexpress", externalUrl: "https://www.aliexpress.com/w/wholesale-poco-x.html" },
-      { id: 4203, name: "OnePlus смартфоны — AliExpress", description: "Поиск смартфонов OnePlus. Проверяйте совместимость сетей, прошивку и условия доставки.", condition: "Внешний магазин · цена на сайте продавца", price: 0, image: "📱", photo: null, category: "aliexpress", externalUrl: "https://www.aliexpress.com/w/wholesale-oneplus-phone.html" },
-      { id: 4204, name: "realme смартфоны — AliExpress", description: "Поиск смартфонов realme. Текущие предложения открываются на AliExpress.", condition: "Внешний магазин · цена на сайте продавца", price: 0, image: "📱", photo: null, category: "aliexpress", externalUrl: "https://www.aliexpress.com/w/wholesale-realme-phone.html" }
+      { id: 4201, name: "Xiaomi Redmi Note", description: "Смартфон из игрового раздела AliExpress. Цена условная, покупка происходит внутри ReLoop.", condition: "AliExpress · игровой каталог", price: 220, image: "📱", photo: null, category: "aliexpress" },
+      { id: 4202, name: "POCO X Series", description: "Мощный смартфон POCO в игровом каталоге. Цена условная, не является реальной ценой магазина.", condition: "AliExpress · игровой каталог", price: 320, image: "📱", photo: null, category: "aliexpress" },
+      { id: 4203, name: "OnePlus смартфон", description: "Смартфон OnePlus в игровом каталоге ReLoop. Покупка за игровую валюту.", condition: "AliExpress · игровой каталог", price: 350, image: "📱", photo: null, category: "aliexpress" },
+      { id: 4204, name: "realme смартфон", description: "Смартфон realme в игровом каталоге. Цена используется только для игровой экономики.", condition: "AliExpress · игровой каталог", price: 200, image: "📱", photo: null, category: "aliexpress" }
     ];
     
     // Полностью удаляем телефоны из стартового каталога; планшеты и ноутбуки оставляем.
@@ -460,8 +460,8 @@
         const card = document.createElement("article"); card.className = "product-card";
         const name = document.createElement("div"); name.className = "product-name"; name.textContent = product.name;
         const condition = document.createElement("div"); condition.className = "product-condition"; condition.textContent = product.condition;
-        const price = document.createElement("div"); price.className = "product-price"; price.textContent = product.externalUrl ? "Цена на AliExpress" : formatPrice(product.price);
-        const buy = document.createElement("button"); buy.className = "primary-button"; buy.textContent = product.externalUrl ? "Открыть AliExpress" : product.demo ? "Демо-покупка" : "Купить"; buy.addEventListener("click", () => { if (product.externalUrl) { window.open(product.externalUrl, "_blank", "noopener,noreferrer"); return; } openConfirmation(product); });
+        const price = document.createElement("div"); price.className = "product-price"; price.textContent = formatPrice(product.price);
+        const buy = document.createElement("button"); buy.className = "primary-button"; buy.textContent = product.demo ? "Демо-покупка" : "Купить"; buy.addEventListener("click", () => openConfirmation(product));
         const offer = document.createElement("button"); offer.className = "secondary-button"; offer.textContent = "Предложить цену"; offer.addEventListener("click", () => alert("Торг подключим следующим шагом!"));
         const favorite = document.createElement("button"); favorite.type = "button"; favorite.className = "favorite-button"; favorite.textContent = favoriteIds.includes(product.id) ? "♥" : "♡";
         favorite.addEventListener("click", () => { favoriteIds = favoriteIds.includes(product.id) ? favoriteIds.filter(id => id !== product.id) : [...favoriteIds, product.id]; saveFavorites(); renderProducts(getPage("searchInput").value); updateProfileView(); });
