@@ -30,6 +30,7 @@
     .product-card { min-width: 0; padding: 9px; border: 1px solid #ededed; border-radius: 16px; overflow: hidden; background: #fff; }
     .product-image { width: 100%; aspect-ratio: 1 / 1; border-radius: 11px; background: #f5f5f5; display: flex; align-items: center; justify-content: center; font-size: clamp(42px, 12vw, 68px); object-fit: contain; margin-bottom: 10px; }
     img.product-image { display: block; }
+    model-viewer.product-3d { display:block; width:100%; height:auto; aspect-ratio:1 / 1; min-height:180px; background:#f5f5f5; border-radius:11px; margin-bottom:10px; }
 
     iframe.product-3d { display:block; width:100%; height:auto; aspect-ratio:1/1; border:0; border-radius:11px; background:#f2f3f5; margin-bottom:10px; }
     .product-name { font-size: 14px; line-height: 1.35; font-weight: 700; min-height: 36px; overflow-wrap: anywhere; }
@@ -336,7 +337,6 @@
       3014: { src: "./iphone_14_pro.glb", alt: "3D-модель Apple iPhone 14 Pro" },
       3017: { src: "./iphone_air.glb", alt: "3D-модель Apple iPhone 17 Air" },
       3018: { src: "./iphone_17_pro_max.glb", alt: "3D-модель Apple iPhone 17 Pro Max" },
-      3018: { src: "./iphone_17_pro_max.glb", alt: "3D-модель Apple iPhone 17 Pro Max" },
       3015: { src: "./nothing_phone_2.glb", alt: "3D-модель Nothing Phone (2)" },
       3016: { src: "./oneplus_12.glb", alt: "3D-модель OnePlus 12" }
     };
@@ -434,11 +434,8 @@
     if (!products.some(product => Number(product.id) === 3018)) {
       products.unshift({ id: 3018, name: "Apple iPhone 17 Pro Max · 256 GB · Cosmic Orange", price: 1150, condition: "Новое", description: "iPhone 17 Pro Max с интерактивной 3D-моделью, которую можно вращать на 360°.", image: "📱", photo: null, category: "phone" });
     }
-    if (!products.some(product => Number(product.id) === 3018)) {
-      products.unshift({ id: 3018, name: "Apple iPhone 17 Pro Max · 256 GB · Cosmic Orange", price: 1150, condition: "Новое", description: "iPhone 17 Pro Max с интерактивной 3D-моделью, которую можно вращать на 360°.", image: "📱", photo: null, category: "phone" });
-    }
-    if (!products.some(product => Number(product.id) === 3018)) {
-      products.unshift({ id: 3018, name: "Apple iPhone 16 Plus · 128 GB", price: 620, condition: "Отличное состояние", description: "iPhone 16 Plus с большим экраном и интерактивной 3D-моделью, которую можно вращать на 360°.", image: "📱", photo: null, category: "phone" });
+    if (!products.some(product => Number(product.id) === 3019)) {
+      products.unshift({ id: 3019, name: "Apple iPhone 16 Plus · 128 GB", price: 620, condition: "Отличное состояние", description: "iPhone 16 Plus с большим экраном и интерактивной 3D-моделью, которую можно вращать на 360°.", image: "📱", photo: null, category: "phone" });
     }
 
     if (!products.some(product => Number(product.id) === 3006)) {
