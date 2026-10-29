@@ -334,6 +334,7 @@
       3008: { src: "./samsung_galaxy_s25_ultra.glb", alt: "3D-модель Samsung Galaxy S25 Ultra" },
       3009: { src: "./iphone_15_pro.glb", alt: "3D-модель Apple iPhone 15 Pro" },
       3014: { src: "./iphone_14_pro.glb", alt: "3D-модель Apple iPhone 14 Pro" },
+      3017: { src: "./iphone_air.glb", alt: "3D-модель Apple iPhone 17 Air" },
       3015: { src: "./nothing_phone_2.glb", alt: "3D-модель Nothing Phone (2)" },
       3016: { src: "./oneplus_12.glb", alt: "3D-модель OnePlus 12" }
     };
@@ -425,6 +426,9 @@
     }
     if (!products.some(product => Number(product.id) === 3014)) {
       products.unshift({ id: 3014, name: "Apple iPhone 14 Pro · 256 GB · Space Black", price: 480, condition: "Хорошее состояние", description: "iPhone 14 Pro с интерактивной локальной 3D-моделью.", image: "📱", photo: null, category: "phone" });
+    }
+    if (!products.some(product => Number(product.id) === 3017)) {
+      products.unshift({ id: 3017, name: "Apple iPhone 17 Air · 256 GB · Sky Blue", price: 850, condition: "Новое", description: "Ультратонкий iPhone 17 Air с интерактивной 3D-моделью, которую можно вращать на 360°.", image: "📱", photo: null, category: "phone" });
     }
 
     if (!products.some(product => Number(product.id) === 3006)) {
