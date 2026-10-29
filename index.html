@@ -338,6 +338,7 @@
       3017: { src: "./iphone_air.glb", alt: "3D-модель Apple iPhone 17 Air" },
       3018: { src: "./iphone_17_pro_max.glb", alt: "3D-модель Apple iPhone 17 Pro Max" },
       3018: { src: "./iphone_17_pro_max.glb", alt: "3D-модель Apple iPhone 17 Pro Max" },
+      3018: { src: "./iphone_17_pro_max.glb", alt: "3D-модель Apple iPhone 17 Pro Max" },
       3015: { src: "./nothing_phone_2.glb", alt: "3D-модель Nothing Phone (2)" },
       3016: { src: "./oneplus_12.glb", alt: "3D-модель OnePlus 12" }
     };
@@ -431,6 +432,9 @@
     }
     if (!products.some(product => Number(product.id) === 3017)) {
       products.unshift({ id: 3017, name: "Apple iPhone 17 Air · 256 GB · Sky Blue", price: 850, condition: "Новое", description: "Ультратонкий iPhone 17 Air с интерактивной 3D-моделью, которую можно вращать на 360°.", image: "📱", photo: null, category: "phone" });
+    }
+    if (!products.some(product => Number(product.id) === 3018)) {
+      products.unshift({ id: 3018, name: "Apple iPhone 17 Pro Max · 256 GB · Cosmic Orange", price: 1150, condition: "Новое", description: "iPhone 17 Pro Max с интерактивной 3D-моделью, которую можно вращать на 360°.", image: "📱", photo: null, category: "phone" });
     }
     if (!products.some(product => Number(product.id) === 3018)) {
       products.unshift({ id: 3018, name: "Apple iPhone 17 Pro Max · 256 GB · Cosmic Orange", price: 1150, condition: "Новое", description: "iPhone 17 Pro Max с интерактивной 3D-моделью, которую можно вращать на 360°.", image: "📱", photo: null, category: "phone" });
