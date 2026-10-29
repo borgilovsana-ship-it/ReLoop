@@ -336,8 +336,6 @@
       3014: { src: "./iphone_14_pro.glb", alt: "3D-модель Apple iPhone 14 Pro" },
       3017: { src: "./iphone_air.glb", alt: "3D-модель Apple iPhone 17 Air" },
       3018: { src: "./iphone_17_pro_max.glb", alt: "3D-модель Apple iPhone 17 Pro Max" },
-      3018: { src: "./iphone_16_plus.glb", alt: "3D-модель Apple iPhone 16 Plus" },
-      3019: { src: "./iphone_17_pro_max.glb", alt: "3D-модель Apple iPhone 17 Pro Max" },
       3015: { src: "./nothing_phone_2.glb", alt: "3D-модель Nothing Phone (2)" },
       3016: { src: "./oneplus_12.glb", alt: "3D-модель OnePlus 12" }
     };
@@ -353,9 +351,8 @@
         viewer.src = modelConfig.src;
         viewer.alt = modelConfig.alt;
         viewer.setAttribute("camera-controls", "");
-        viewer.setAttribute("auto-rotate", "");
-        viewer.setAttribute("rotation-per-second", "18deg");
-        viewer.setAttribute("shadow-intensity", "1");
+        // Не крутим тяжёлые 3D-модели автоматически: это снижает нагрузку на телефон.
+        viewer.setAttribute("shadow-intensity", "0.35");
         viewer.setAttribute("exposure", "1");
         viewer.setAttribute("loading", "lazy");
         return viewer;
@@ -438,9 +435,6 @@
     }
     if (!products.some(product => Number(product.id) === 3018)) {
       products.unshift({ id: 3018, name: "Apple iPhone 16 Plus · 128 GB", price: 620, condition: "Отличное состояние", description: "iPhone 16 Plus с большим экраном и интерактивной 3D-моделью, которую можно вращать на 360°.", image: "📱", photo: null, category: "phone" });
-    }
-    if (!products.some(product => Number(product.id) === 3019)) {
-      products.unshift({ id: 3019, name: "Apple iPhone 17 Pro Max · 256 GB", price: 1150, condition: "Новое", description: "iPhone 17 Pro Max с интерактивной 3D-моделью, которую можно вращать на 360°.", image: "📱", photo: null, category: "phone" });
     }
 
     if (!products.some(product => Number(product.id) === 3006)) {
