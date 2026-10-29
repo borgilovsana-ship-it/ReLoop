@@ -387,14 +387,16 @@
         if (saved.length) nextId = Math.max(nextId, ...saved.map(product => Number(product.id) + 1));
       } catch (_) {}
     })();
-    // Удаляем телефоны из каталога, пользовательских объявлений, избранного и инвентаря.
-    const isPhoneProduct = product => /iphone|galaxy|pixel|xiaomi|oneplus|nothing phone|xperia|motorola|huawei|honor|oppo|vivo|zenfone|smartphone|телефон|смартфон/i.test(String(product?.name || "")) || product?.category === "phone";
+    // Оставляем iPhone, удаляем все остальные телефоны из каталога, объявлений, избранного и инвентаря.
+    const isIPhoneProduct = product => /iphone/i.test(String(product?.name || ""));
+    const isPhoneProduct = product => product?.category === "phone" || /iphone|galaxy|pixel|xiaomi|redmi|poco|oneplus|nothing phone|xperia|motorola|huawei|honor|oppo|vivo|zenfone|realme|smartphone|телефон|смартфон/i.test(String(product?.name || ""));
+    const shouldRemovePhone = product => isPhoneProduct(product) && !isIPhoneProduct(product);
     for (let i = products.length - 1; i >= 0; i--) {
-      if (isPhoneProduct(products[i])) products.splice(i, 1);
+      if (shouldRemovePhone(products[i])) products.splice(i, 1);
     }
     userListingIds = userListingIds.filter(id => products.some(product => product.id === id));
     favoriteIds = favoriteIds.filter(id => products.some(product => product.id === id));
-    inventoryItems = inventoryItems.filter(item => !isPhoneProduct(item?.product || item));
+    inventoryItems = inventoryItems.filter(item => !shouldRemovePhone(item?.product || item));
     try {
       localStorage.setItem("reloop-my-listings", JSON.stringify(userListingIds));
       localStorage.setItem("reloop-my-products", JSON.stringify(products.filter(product => userListingIds.includes(product.id))));
