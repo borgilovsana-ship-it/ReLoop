@@ -349,8 +349,24 @@
       if (modelConfig) {
         const viewer = document.createElement("model-viewer");
         viewer.className = "product-image product-3d";
-        viewer.src = modelConfig.src;
         viewer.alt = modelConfig.alt;
+        // Загружаем тяжёлый GLB только когда карточка близко к экрану.
+        // Это уменьшает стартовую нагрузку, особенно на телефонах.
+        if ("IntersectionObserver" in window) {
+          viewer.dataset.modelSrc = modelConfig.src;
+          const modelObserver = new IntersectionObserver((entries, observer) => {
+            entries.forEach(entry => {
+              if (entry.isIntersecting) {
+                const element = entry.target;
+                if (!element.src) element.src = element.dataset.modelSrc;
+                observer.unobserve(element);
+              }
+            });
+          }, { rootMargin: "180px" });
+          modelObserver.observe(viewer);
+        } else {
+          viewer.src = modelConfig.src;
+        }
         viewer.setAttribute("camera-controls", "");
         // Не крутим тяжёлые 3D-модели автоматически: это снижает нагрузку на телефон.
         viewer.setAttribute("shadow-intensity", "0.35");
