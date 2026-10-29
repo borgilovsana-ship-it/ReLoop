@@ -200,11 +200,6 @@
   <script>
     const products = [
       { id: 4101, name: "iPhone 13 — пример объявления", description: "Демо-карточка для локального каталога. Перед покупкой проверьте состояние, батарею и продавца.", condition: "Б/У · пример объявления", price: 180, image: "📱", photo: null, category: "used", demo: true },
-      { id: 4102, name: "Samsung Galaxy S22 — пример объявления", description: "Демо-карточка. Цена иллюстративная, это не реальное предложение продавца.", condition: "Б/У · пример объявления", price: 150, image: "📱", photo: null, category: "used", demo: true },
-      { id: 4201, name: "Xiaomi Redmi A5 4/128 ГБ", description: "Реальная модель. Ориентир цены в российских магазинах — около 8 990 ₽; цена зависит от продавца и наличия.", condition: "Xiaomi · ориентир розничной цены", price: 8990, image: "📱", photo: null, category: "aliexpress" },
-      { id: 4202, name: "Xiaomi Redmi Note 14 8/128 ГБ", description: "Реальная модель. Ориентир цены в российских магазинах — около 14 990 ₽; цена зависит от продавца и наличия.", condition: "Xiaomi · ориентир розничной цены", price: 14990, image: "📱", photo: null, category: "aliexpress" },
-      { id: 4204, name: "Xiaomi 14T 12/512 ГБ", description: "Реальная модель. Ориентир цены российского продавца — около 32 500 ₽; цена зависит от продавца и наличия.", condition: "Xiaomi · ориентир розничной цены", price: 32500, image: "📱", photo: null, category: "aliexpress" },
-      { id: 4205, name: "Xiaomi 14T Pro 12/1 ТБ", description: "Реальная модель. Ориентир цены российского продавца — около 49 000 ₽; цена зависит от продавца и наличия.", condition: "Xiaomi · ориентир розничной цены", price: 49000, image: "📱", photo: null, category: "aliexpress" }
     ];
     
     // Полностью удаляем телефоны из стартового каталога; планшеты и ноутбуки оставляем.
@@ -406,7 +401,7 @@
       localStorage.setItem("reloop-favorites", JSON.stringify(favoriteIds));
       localStorage.setItem("reloop-inventory", JSON.stringify(inventoryItems));
     } catch (_) {}
-    // Стартовые телефоны ReLoop: iPhone 18 Pro Max Burgundy, iPhone 16 Pro Max, iPhone 16 и iPhone 7 Rose Gold; iPad Pro 13 M4.
+    // В каталоге телефонов оставляем только iPhone; остальные бренды удалены.
     if (!products.some(product => Number(product.id) === 3001)) {
       products.unshift({ id: 3001, name: "Apple iPhone 16 Pro Max · 256 GB · Natural Titanium", price: 780, condition: "Отличное состояние", description: "iPhone 16 Pro Max с интерактивной 3D-моделью, которую можно вращать на 360°.", image: "📱", photo: null, category: "phone" });
     }
@@ -419,9 +414,6 @@
     if (!products.some(product => Number(product.id) === 3005)) {
       products.unshift({ id: 3005, name: "Apple iPhone 7 · Rose Gold · 128 GB", price: 120, condition: "Хорошее состояние", description: "iPhone 7 в розово-золотом цвете с интерактивной 3D-моделью.", image: "📱", photo: null, category: "phone" });
     }
-    if (!products.some(product => Number(product.id) === 3008)) {
-      products.unshift({ id: 3008, name: "Samsung Galaxy S25 Ultra · 256 GB · Titanium Gray", price: 1050, condition: "Отличное состояние", description: "Флагман Samsung с большим экраном, универсальными камерами и S Pen.", image: "📱", photo: null, category: "phone" });
-    }
     if (!products.some(product => Number(product.id) === 3009)) {
       products.unshift({ id: 3009, name: "Apple iPhone 15 Pro · 256 GB · Blue Titanium", price: 680, condition: "Хорошее состояние", description: "Компактный Pro-смартфон с титановым корпусом и камерой высокого класса.", image: "📱", photo: null, category: "phone" });
     }
@@ -429,14 +421,8 @@
     for (let i = products.length - 1; i >= 0; i--) {
       if ([3010, 3011, 3012, 3013].includes(Number(products[i].id))) products.splice(i, 1);
     }
-    if (!products.some(product => Number(product.id) === 3015)) {
-      products.unshift({ id: 3015, name: "Nothing Phone (2) · 256 GB · Dark Gray", price: 350, condition: "Хорошее состояние", description: "Nothing Phone (2) с фирменной световой Glyph-подсветкой и интерактивной 3D-моделью.", image: "📱", photo: null, category: "phone" });
-    }
     if (!products.some(product => Number(product.id) === 3014)) {
       products.unshift({ id: 3014, name: "Apple iPhone 14 Pro · 256 GB · Space Black", price: 480, condition: "Хорошее состояние", description: "iPhone 14 Pro с интерактивной локальной 3D-моделью.", image: "📱", photo: null, category: "phone" });
-    }
-    if (!products.some(product => Number(product.id) === 3016)) {
-      products.unshift({ id: 3016, name: "OnePlus 12 · 256 GB · Flowy Emerald", price: 620, condition: "Хорошее состояние", description: "OnePlus 12 с интерактивной локальной 3D-моделью.", image: "📱", photo: null, category: "phone" });
     }
 
     if (!products.some(product => Number(product.id) === 3006)) {
